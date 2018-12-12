@@ -123,7 +123,9 @@ void MainWindow::on_rbCircle_clicked()
 void MainWindow::on_rbRing_clicked()
 {
     pattSelected = PATT_RING;
-    ui->numRows->setText("3");
-    ui->numCols->setText("4");
+//    ui->numRows->setText("3");
+    ui->numRows->setText("5");
+//    ui->numCols->setText("4");
+    ui->numCols->setText("6");
     ui->centersDistance->setText("25.5");
 }

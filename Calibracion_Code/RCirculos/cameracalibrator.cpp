@@ -192,15 +192,18 @@ void fcnWithMoreFcnSinTrRot(const int* m, const int* n, const realMP* x, realMP*
 ///
 void CameraCalibrator::processingPattern()
 {
+    cout<<"Procesing Pattern"<<endl;
     // Variables auxiliares
     Mat img, tmp;
     int framesTotal = 0, framesAnalyzed = 0;
+    int framesPattern = 0;
     bool status = false;
     map<uint, vector<Point2f> > mapFrames;
     vector<float> distances;
 
     double auxtime = 0;
-    int64 e1,e2;
+    double e1,e2;
+    TickMeter tm;
 
     while (true && actived) {
         // Lectura de cada frame
@@ -208,34 +211,39 @@ void CameraCalibrator::processingPattern()
         if (!img.data)
             break;
         framesTotal++;
-        e1 = cv::getTickCount();
+        e1 = (double)cv::getTickCount();
         vector<Point2f> keypoints; //vector vacio d keypoints
         tmp = img.clone();
         pattDetector->setImage(tmp);
         switch (pattDetector->getCurrentPattern()) {
             case PATT_CIRCLE:
+                tm.start();
                 status = pattDetector->processingCirclesPattern(keypoints);
+                tm.stop();
                 break;
-            case PATT_RING:        
+            case PATT_RING:
+                tm.start();
                 status = pattDetector->processingRingsPattern(keypoints);
+                tm.stop();
                 break;
         }
-
-         e2 = cv::getTickCount();
+         //e2 = (double)cv::getTickCount();
 
         // preguntamos si encontro el patron
-        if(status) {            
-            auxtime = auxtime + (e2-e1)/cv::getTickFrequency();
-            cout<<"time"<<auxtime<<endl;
+        if(status) {
+            //cout<<"time in actual frame"<<(e2-e1)/getTickFrequency();
+            //auxtime = auxtime + (e2-e1);
+            framesPattern++;
+//            cout<<"time"<<auxtime<<endl;
             framesAnalyzed++;
+            cout<<"framesAnalized"<<framesAnalyzed;
             mapFrames[framesTotal] = keypoints;
-
             //imwrite(folderOutVideo + "/frame_" + num2str<int>(framesTotal) + ".png", tmp);
-        }
-        else {
+         }
+          else {
             //imwrite(folderOutVideo + "/frame_" + num2str<int>(framesTotal) + "_mal.png", tmp);
             continue; // Pasamos al siguiente frame
-        }
+          }
 
         // Evaluamos si esta activada la opcion de calcular la distancia de la camara al patron
         /*if(distanceActived) {
@@ -244,9 +252,10 @@ void CameraCalibrator::processingPattern()
         if (waitKey(10) >= 0)
             break;
     }
-
+    double average_time = tm.getTimeMilli() / tm.getCounter();
+    auxtime = auxtime*1000;
     cout << "=====================\n";
-    cout << "Total Frames: " << framesTotal << "\nFrames Analizados: " << framesAnalyzed << "\n% Analisis: " << (framesAnalyzed * 1.0 / framesTotal) << endl;
+    cout << "Total Frames: " << framesTotal << "\nFrames Analizados: " << framesAnalyzed << "\n Analisis: " << (framesAnalyzed * 1.0 / framesTotal) << "\n AVG: "<<average_time<< endl;
     cout << "=====================\n";
     cout << "tiempo promedio "<<auxtime /framesTotal;
 

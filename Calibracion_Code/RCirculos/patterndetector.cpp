@@ -858,8 +858,8 @@ void PatternDetector::drawZigZagPattern(vector<Point2f> gridPoints, vector<StruS
         }
     }
     Mat tmp = imageRaw.clone();
-    imshow("RESULTADO FINAL", tmp);
-    visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(imageRaw));
+    //imshow("RESULTADO FINAL", tmp);
+    //visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(imageRaw));
 }
 
 bool PatternDetector::processingRingsPattern(std::vector<Point2f> &keypoints)
@@ -875,14 +875,14 @@ bool PatternDetector::processingRingsPattern(std::vector<Point2f> &keypoints)
     // Aplicacion de filtro gaussiano
     GaussianBlur(tmp, tmp, Size(3,3), 0.5, 0.5);
 
-//    visualizer->visualizeImage(PROC1, ImageHelper::convertMatToQimage(tmp.clone()), "Filtro gaussiano");
+    //visualizer->visualizeImage(PROC1, ImageHelper::convertMatToQimage(tmp.clone()), "Filtro gaussiano");
 
     // Segmentacion de imagen usando threshold adaptativo
     tmp = adaptiveThresholdIntegralImage(tmp);
-//    visualizer->visualizeImage(PROC2, ImageHelper::convertMatToQimage(tmp.clone()), "Threshold adaptativo (paper)");
+    //visualizer->visualizeImage(PROC2, ImageHelper::convertMatToQimage(tmp.clone()), "Threshold adaptativo (paper)");
     // Aplicación del algoritmo de Canny: Ratio max:min, 2:1 o 3:1
     Canny(tmp, tmp, C_THRES_CANNY, C_THRES_CANNY * C_FACTOR_CANNY);
-//    visualizer->visualizeImage(PROC3, ImageHelper::convertMatToQimage(tmp.clone()), "Canny");
+    //visualizer->visualizeImage(PROC3, ImageHelper::convertMatToQimage(tmp.clone()), "Canny");
     // Obtención del ROI
     cout << "findROI_rings " << endl;
     keypoints = findROI_rings(tmp.clone(), tmp);
@@ -896,7 +896,7 @@ bool PatternDetector::processingRingsPattern(std::vector<Point2f> &keypoints)
 //    cout<<"timesum: "<<timesum<<endl;
 //    cout<<"TIEMPO: "<<time<<"ms"<<endl;
 
-    visualizer->visualizeImage(PROC4, ImageHelper::convertMatToQimage(tmp.clone()), "ROI");
+    //visualizer->visualizeImage(PROC4, ImageHelper::convertMatToQimage(tmp.clone()), "ROI");
     // Si no se tiene completo el patron, se descarta el frame
     cout << "trackingPoints Rings" << endl;
     bool trackCorrect = trackingRingsPoints(keypoints);
