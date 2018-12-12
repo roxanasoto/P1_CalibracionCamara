@@ -199,28 +199,37 @@ void CameraCalibrator::processingPattern()
     map<uint, vector<Point2f> > mapFrames;
     vector<float> distances;
 
+    double auxtime = 0;
+    int64 e1,e2;
+
     while (true && actived) {
         // Lectura de cada frame
         video >> img;
         if (!img.data)
             break;
         framesTotal++;
-
-        vector<Point2f> keypoints;
+        e1 = cv::getTickCount();
+        vector<Point2f> keypoints; //vector vacio d keypoints
         tmp = img.clone();
         pattDetector->setImage(tmp);
         switch (pattDetector->getCurrentPattern()) {
             case PATT_CIRCLE:
                 status = pattDetector->processingCirclesPattern(keypoints);
                 break;
-            case PATT_RING:
+            case PATT_RING:        
                 status = pattDetector->processingRingsPattern(keypoints);
                 break;
         }
+
+         e2 = cv::getTickCount();
+
         // preguntamos si encontro el patron
-        if(status) {
+        if(status) {            
+            auxtime = auxtime + (e2-e1)/cv::getTickFrequency();
+            cout<<"time"<<auxtime<<endl;
             framesAnalyzed++;
             mapFrames[framesTotal] = keypoints;
+
             //imwrite(folderOutVideo + "/frame_" + num2str<int>(framesTotal) + ".png", tmp);
         }
         else {
@@ -239,6 +248,7 @@ void CameraCalibrator::processingPattern()
     cout << "=====================\n";
     cout << "Total Frames: " << framesTotal << "\nFrames Analizados: " << framesAnalyzed << "\n% Analisis: " << (framesAnalyzed * 1.0 / framesTotal) << endl;
     cout << "=====================\n";
+    cout << "tiempo promedio "<<auxtime /framesTotal;
 
     if(actived) {
         if(distanceActived)
@@ -289,18 +299,20 @@ void CameraCalibrator::initProcessing(unsigned int pattSelected)
     visualizer->cleanImage(PROC2);
     visualizer->cleanImage(PROC3);
     visualizer->cleanImage(PROC4);
+
     //visualizer->cleanImage(PROC5);
     /*visualizer->cleanImage(PROC6);
     visualizer->cleanImage(PROC7);
     visualizer->cleanImage(PROC8);
     visualizer->cleanImage(PROC9);*/
+
     visualizer->cleanImage(PROCFIN);
 
     pattDetector->setCurrentPattern(pattSelected);
 
     switch (pattSelected) {
     case PATT_CIRCLE:
-        folderOutVideo = pathVideo.substr(pathVideo.size()-21, 17);
+        folderOutVideo = pathVideo.substr(pathVideo.size()-21, 17); //cojemos el substring del path
         break;
     case PATT_RING:
         folderOutVideo = pathVideo.substr(pathVideo.size()-20, 16);

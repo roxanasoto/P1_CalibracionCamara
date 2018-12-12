@@ -110,7 +110,7 @@ void MainWindow::cleanImage(int id)
 
     }
 }
-//patt circle
+//pattern circles
 void MainWindow::on_rbCircle_clicked()
 {
     pattSelected = PATT_CIRCLE;
@@ -119,7 +119,7 @@ void MainWindow::on_rbCircle_clicked()
     //ui->centersDistance->setText("24.8");
     ui->centersDistance->setText("12.4");
 }
-//patt ring
+//pattern rings
 void MainWindow::on_rbRing_clicked()
 {
     pattSelected = PATT_RING;

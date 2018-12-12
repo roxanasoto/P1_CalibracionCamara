@@ -387,6 +387,7 @@ vector<Point2f> PatternDetector::findROI_circles(Mat image, Mat &imgOut)
     vector<Point2f> keypoints;
     vector<pair<float, int> > vectRadios;
 
+
     // Obtencion de los contornos más externos
     vector<vector<Point> > contours;
     findContours(image, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
@@ -866,21 +867,36 @@ bool PatternDetector::processingRingsPattern(std::vector<Point2f> &keypoints)
     // Variables auxiliares
     Mat tmp;
 
+    //calculo de tiempo1 antes de todo por frame
+//    int64 e1 = cv::getTickCount();
+
     // Conversion de imagen a escala de grises
     cvtColor(img, tmp, CV_BGR2GRAY);
     // Aplicacion de filtro gaussiano
     GaussianBlur(tmp, tmp, Size(3,3), 0.5, 0.5);
-    visualizer->visualizeImage(PROC1, ImageHelper::convertMatToQimage(tmp.clone()), "Filtro gaussiano");
+
+//    visualizer->visualizeImage(PROC1, ImageHelper::convertMatToQimage(tmp.clone()), "Filtro gaussiano");
+
     // Segmentacion de imagen usando threshold adaptativo
     tmp = adaptiveThresholdIntegralImage(tmp);
-    visualizer->visualizeImage(PROC2, ImageHelper::convertMatToQimage(tmp.clone()), "Threshold adaptativo (paper)");
+//    visualizer->visualizeImage(PROC2, ImageHelper::convertMatToQimage(tmp.clone()), "Threshold adaptativo (paper)");
     // Aplicación del algoritmo de Canny: Ratio max:min, 2:1 o 3:1
     Canny(tmp, tmp, C_THRES_CANNY, C_THRES_CANNY * C_FACTOR_CANNY);
-    visualizer->visualizeImage(PROC3, ImageHelper::convertMatToQimage(tmp.clone()), "Canny");
+//    visualizer->visualizeImage(PROC3, ImageHelper::convertMatToQimage(tmp.clone()), "Canny");
     // Obtención del ROI
     cout << "findROI_rings " << endl;
     keypoints = findROI_rings(tmp.clone(), tmp);
-    visualizer->visualizeImage(PROC4, ImageHelper::convertMatToQimage(tmp.clone()), "ROI");
+
+    // calculo de tiempo para el final de la deteccion
+//    int64 e2 = cv::getTickCount();
+    //double time = (e2 - e1)/ cv::getTickFrequency();
+//    double time = (e2-e1) / 1000;
+
+//    double timesum = timesum + time;
+//    cout<<"timesum: "<<timesum<<endl;
+//    cout<<"TIEMPO: "<<time<<"ms"<<endl;
+
+//    visualizer->visualizeImage(PROC4, ImageHelper::convertMatToQimage(tmp.clone()), "ROI");
     // Si no se tiene completo el patron, se descarta el frame
     cout << "trackingPoints Rings" << endl;
     bool trackCorrect = trackingRingsPoints(keypoints);
