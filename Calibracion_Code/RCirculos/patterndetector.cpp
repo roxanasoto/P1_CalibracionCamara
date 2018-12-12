@@ -1175,7 +1175,82 @@ bool PatternDetector::trackingCirclePoints(vector<Point2f> &keypoints) {
     return true;
 }
 
+#define PI 3.14159265
+RotatedRect RectanguloR;
+int indice= 1;
+bool mayorpuntosX(Point2f i, Point2f j)
+{
+    Point2f vertices[4];
+    RectanguloR.points(vertices);
+    i = i - vertices[indice];
+    j = j - vertices[indice];
+    return (cos(RectanguloR.angle)*i.x + sin(RectanguloR.angle)*i.y) < (cos(RectanguloR.angle)*j.x + sin(RectanguloR.angle)*j.y);
+}
+
+bool mayorpuntosY(Point2f i, Point2f j)
+{
+    Point2f vertices[4];
+    RectanguloR.points(vertices);
+    i = i - vertices[indice];
+    j = j - vertices[indice];
+
+    return (cos(RectanguloR.angle)*i.y - sin(RectanguloR.angle)*i.x) < (cos(RectanguloR.angle)*j.y - sin(RectanguloR.angle)*j.x);
+}
+vector<Point2f> ordenar(vector<Point2f> centros)
+{
+    RotatedRect rr = minAreaRect(centros);
+    RectanguloR = rr;
+
+    if (rr.angle < -90)
+        waitKey(19);
+    if (rr.size.width < rr.size.height)
+    {
+        indice = 2;
+        RectanguloR.angle = -(-90 - RectanguloR.angle)*PI / 180;
+    }
+    else
+    {
+        indice = 1;
+        RectanguloR.angle = RectanguloR.angle*PI / 180;
+        //RectanguloR.angle = 0;
+    }
+
+    std::sort(centros.begin(), centros.end(), mayorpuntosX);
+
+    for (size_t i = 0; i < 5; i++)
+    {
+        std::sort(centros.begin() + 4 * i, centros.begin() + (4 * i + 4), mayorpuntosY);
+    }
+
+    //std::sort(centros.begin(), centros.end(), mayorpuntosY);
+
+    return centros;
+}
+
 bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
+    //ordenar
+    keypoints.resize(20);
+    keypoints = ordenar(keypoints);
+            cv::circle(img, keypoints[0], 10, Scalar(255, 0, 125));
+            cv::putText(img,to_string(0),keypoints[0],cv::FONT_HERSHEY_SIMPLEX,0.5,CV_RGB(255,255,255),2);
+
+            for (size_t i = 1; i < 20; i++)
+            {
+                cv::putText(img,to_string(i),keypoints[i],cv::FONT_HERSHEY_SIMPLEX,0.5,CV_RGB(255,255,255),2);
+
+                cv::circle(img, keypoints[i], 10, MY_COLOR_BLUE);
+            }
+
+            for (size_t i = 1; i < 20; i++)
+            {
+                cv::line(img, keypoints[i - 1], keypoints[i], MY_COLOR_GREEN);
+            }
+    //dibujar
+            imshow("RESULTADO FINAL", img);
+
+    visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(img), "Resultado Final");
+
+            return true;
     if(keypoints.size() != numCols * numRows) {
         return false;
     }

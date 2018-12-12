@@ -9,8 +9,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <fstream>
 
-//#include <minpack.h>
-//#define realMP __minpack_real__
 
 #define INTERVAL_INC    7
 #define OFFSET_ANKUR    30
