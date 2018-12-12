@@ -896,7 +896,7 @@ bool PatternDetector::processingRingsPattern(std::vector<Point2f> &keypoints)
 //    cout<<"timesum: "<<timesum<<endl;
 //    cout<<"TIEMPO: "<<time<<"ms"<<endl;
 
-//    visualizer->visualizeImage(PROC4, ImageHelper::convertMatToQimage(tmp.clone()), "ROI");
+    visualizer->visualizeImage(PROC4, ImageHelper::convertMatToQimage(tmp.clone()), "ROI");
     // Si no se tiene completo el patron, se descarta el frame
     cout << "trackingPoints Rings" << endl;
     bool trackCorrect = trackingRingsPoints(keypoints);
