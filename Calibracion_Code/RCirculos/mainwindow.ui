@@ -229,7 +229,7 @@
       </font>
      </property>
      <property name="text">
-      <string>N° elems/col:</string>
+      <string>N° filas:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

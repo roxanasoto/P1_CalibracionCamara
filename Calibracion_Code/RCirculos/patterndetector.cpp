@@ -485,7 +485,6 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
                 //line(drawImage0, Point(Points[i].first,Points[i].second),Point(Points[idx].first,Points[idx].second) ,Scalar(0, 0, 255));
 
             }
-            //imwrite("/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/cercanos/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage0);
 
             //Hallamos las frecuencias de las distancias mas cercanas
             map<double,int> mapa2;
@@ -581,7 +580,6 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
 
             visualizer->visualizeImage(PROC6, ImageHelper::convertMatToQimage(drawImage2), "Recorrido DFS");
 
-            //imwrite("/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/DFS/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage2);
 
             // Sacamos los que tiene los costos minimos de entre las aristas que pertenecen al grafo
             sort(distancias2.begin(),distancias2.end());
@@ -607,9 +605,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
                 circle(tmp, P2, 4, Scalar(255, 0, 255), -1);
                 line(drawImage,P1,P2,Scalar(0, 0, 255));
             }
-        // Escribiendo los frames del resultado
-        //string str3 = "/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/MST/Frames_" + num2str<int>(numeroGlobal) + ".png";
-        //imwrite(str3, drawImage);
+
         numeroGlobal++;
 
         visualizer->visualizeImage(PROC7, ImageHelper::convertMatToQimage(drawImage), "Aristas minimas");
@@ -687,7 +683,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
         }
         return patternActual2;
 }
-
+/*
 ///
 /// \brief PatternDetector::cleanNoiseUsingDistances   Funcion que elimina ruido usando las distancias entre los puntos
 /// \param keypoints    Vector de centros de los contornos
@@ -778,7 +774,7 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
         arrayMat->push_back(tempKF);
 
         //primera vez que aparece el patron
-        /*if(kfTracking->firstFound[0]){
+        if(kfTracking->firstFound[0]){
             kfTracking->setStateInit(arrayMat);
             kfTracking->firstFound[0] = false;
         }else{
@@ -791,7 +787,7 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
                 circle(imgOut, Point2f((*matForPre)[i].at<float>(0),(*matForPre)[i].at<float>(1)),3, MY_COLOR_WHITE,-1);
                 line(imgOut,Point2f(centroide.x,centroide.y), Point2f((*matForPre)[i].at<float>(0),(*matForPre)[i].at<float>(1)),MY_COLOR_WHITE,1,8,0);
             }
-        }*/
+        }
     }
     if((int)patternActual.size() <= maximobolitas){
         patternBefore = patternActual;
@@ -799,6 +795,7 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
     return patternActual;
 }
 
+*/
 void PatternDetector::drawZigZagPattern(vector<Point2f> gridPoints, vector<StruSegme> vectSeg, Mat imageRaw, int gross, int flag){
 
     // DIBUJAMOS EL PATRON ORIENTADO de acuerdo a flag
@@ -857,7 +854,7 @@ void PatternDetector::drawZigZagPattern(vector<Point2f> gridPoints, vector<StruS
         }
     }
     Mat tmp = imageRaw.clone();
-    //imshow("RESULTADO FINAL", tmp);
+    imshow("RESULTADO FINAL", tmp);
     visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(imageRaw));
 }
 
@@ -878,14 +875,9 @@ bool PatternDetector::processingRingsPattern(std::vector<Point2f> &keypoints)
     cout << "findROI_rings " << endl;
     keypoints = findROI_rings(tmp.clone(), tmp);
     visualizer->visualizeImage(PROC3, ImageHelper::convertMatToQimage(tmp.clone()), "ROI");
-    // Obtención de los centros finales
-    cout << "cleanNoiseUsingDistances " << endl;
-    keypoints = cleanNoiseUsingDistances(keypoints, tmp);
-    visualizer->visualizeImage(PROC4, ImageHelper::convertMatToQimage(tmp), "Reduccion de ruido con distancias y KF");
-    // Si no se tiene completo el patron, se descarta el frame
     cout << "trackingPoints Rings" << endl;
     bool trackCorrect = trackingRingsPoints(keypoints);
-    cout << endl ;
+    cout << "trancking correct" ;
     return trackCorrect;
 }
 
