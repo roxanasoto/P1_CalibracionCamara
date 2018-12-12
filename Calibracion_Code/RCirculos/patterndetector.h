@@ -4,7 +4,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include "mainwindow.h"
-//#include "KFTracking.h"
+#include "KFTracking.h"
 #include "trackingGrid.h"
 
 using namespace std;
@@ -38,6 +38,7 @@ private:
     unsigned int numRows;
     MainWindow *visualizer;
 
+    KFTracking* kfTracking;
     TrackingGrid* trackGrid;
     double dtKFTrac;
     double radioOptimo;

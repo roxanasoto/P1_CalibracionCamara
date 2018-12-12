@@ -18,7 +18,7 @@ KFTracking::KFTracking(int n){
     for(int i = 0; i < n; i++)
         firstFound.push_back(true);
 
-    cv::KalmanFilter kf(stateSize, measSize, contrSize, type);
+    KalmanFilter kf(stateSize, measSize, contrSize, type);
 
     // State Matrix
     // [px py vx vy hx wx]'

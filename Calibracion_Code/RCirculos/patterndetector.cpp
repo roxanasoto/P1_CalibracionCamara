@@ -235,6 +235,8 @@ vector<Point2f> PatternDetector::cleanNoiseCenters(vector<Point2f> vCenters, vec
     // Si el numero de centros es el mismo numero de componentes del patron, se regresa el mismo vector
     if(vCenters.size() <= (numCols * numRows + maxError)) {
         // Ordenamiento de los radios en orden descendente para contar las frecuencias por intervalo
+        if(vRadius.size()<=2)
+            return vCenters;
         sort(vRadius.rbegin(), vRadius.rend());
         radioOptimo = (vRadius[0].first + vRadius[vRadius.size()-1].first) * 0.5;
         return vCenters;
@@ -387,7 +389,6 @@ vector<Point2f> PatternDetector::findROI_circles(Mat image, Mat &imgOut)
     vector<Point2f> keypoints;
     vector<pair<float, int> > vectRadios;
 
-
     // Obtencion de los contornos más externos
     vector<vector<Point> > contours;
     findContours(image, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
@@ -430,7 +431,7 @@ vector<Point2f> PatternDetector::findROI_circles(Mat image, Mat &imgOut)
     }
     return keypoints;
 }
-/*
+
 ///
 /// \brief PatternDetector::findFinalCenters_circles
 /// \param keypoints
@@ -664,7 +665,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
             arrayMat->push_back(tempKF);
 
             //primera vez que aparece el patron
-            if(kfTracking->firstFound[0]){
+            /*if(kfTracking->firstFound[0]){
                 kfTracking->setStateInit(arrayMat);
                 kfTracking->firstFound[0] = false;
             }else{
@@ -678,7 +679,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
                     line(frameDraw,Point(centroide.x,centroide.y), Point((*matForPre)[i].at<float>(0),(*matForPre)[i].at<float>(1)),MY_COLOR_WHITE,1,8,0);
                 }
             }
-            visualizer->visualizeImage(PROC8, ImageHelper::convertMatToQimage(frameDraw), "Filtro Kalman eliminar ruido");
+            visualizer->visualizeImage(PROC8, ImageHelper::convertMatToQimage(frameDraw), "Filtro Kalman eliminar ruido");*/
         }
 
         if((int)patternActual.size() <= maximobolitas){
@@ -686,9 +687,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
         }
         return patternActual2;
 }
-*/
 
-/*
 ///
 /// \brief PatternDetector::cleanNoiseUsingDistances   Funcion que elimina ruido usando las distancias entre los puntos
 /// \param keypoints    Vector de centros de los contornos
@@ -779,7 +778,7 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
         arrayMat->push_back(tempKF);
 
         //primera vez que aparece el patron
-        if(kfTracking->firstFound[0]){
+        /*if(kfTracking->firstFound[0]){
             kfTracking->setStateInit(arrayMat);
             kfTracking->firstFound[0] = false;
         }else{
@@ -792,25 +791,25 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
                 circle(imgOut, Point2f((*matForPre)[i].at<float>(0),(*matForPre)[i].at<float>(1)),3, MY_COLOR_WHITE,-1);
                 line(imgOut,Point2f(centroide.x,centroide.y), Point2f((*matForPre)[i].at<float>(0),(*matForPre)[i].at<float>(1)),MY_COLOR_WHITE,1,8,0);
             }
-        }
+        }*/
     }
     if((int)patternActual.size() <= maximobolitas){
         patternBefore = patternActual;
     }
     return patternActual;
-}*/
+}
 
 void PatternDetector::drawZigZagPattern(vector<Point2f> gridPoints, vector<StruSegme> vectSeg, Mat imageRaw, int gross, int flag){
 
     // DIBUJAMOS EL PATRON ORIENTADO de acuerdo a flag
 
     //dibujamos los puntos
-    /*for(int i = 0; i < (int)gridPoints.size(); i++){
+    for(int i = 0; i < (int)gridPoints.size(); i++){
         stringstream sstr;
         sstr << i;
         putText(imageRaw, sstr.str(), Point2f(gridPoints[i].x + 3, gridPoints[i].y - 3), cv::FONT_HERSHEY_SIMPLEX, 0.5, CV_RGB(20,150,20), 1);
         circle(imageRaw, gridPoints[i], gross, MY_COLOR_YELLOW, CV_FILLED, 8, 0);
-    }*/
+    }
 
     //dibujamos a rectas para las filas
     TrackingGrid* trackingGrid  = new TrackingGrid(0);
@@ -859,7 +858,7 @@ void PatternDetector::drawZigZagPattern(vector<Point2f> gridPoints, vector<StruS
     }
     Mat tmp = imageRaw.clone();
     //imshow("RESULTADO FINAL", tmp);
-    //visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(imageRaw));
+    visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(imageRaw));
 }
 
 bool PatternDetector::processingRingsPattern(std::vector<Point2f> &keypoints)
@@ -867,36 +866,22 @@ bool PatternDetector::processingRingsPattern(std::vector<Point2f> &keypoints)
     // Variables auxiliares
     Mat tmp;
 
-    //calculo de tiempo1 antes de todo por frame
-//    int64 e1 = cv::getTickCount();
-
     // Conversion de imagen a escala de grises
     cvtColor(img, tmp, CV_BGR2GRAY);
     // Aplicacion de filtro gaussiano
     GaussianBlur(tmp, tmp, Size(3,3), 0.5, 0.5);
-
-    //visualizer->visualizeImage(PROC1, ImageHelper::convertMatToQimage(tmp.clone()), "Filtro gaussiano");
-
+    visualizer->visualizeImage(PROC1, ImageHelper::convertMatToQimage(tmp.clone()), "Filtro gaussiano");
     // Segmentacion de imagen usando threshold adaptativo
     tmp = adaptiveThresholdIntegralImage(tmp);
-    //visualizer->visualizeImage(PROC2, ImageHelper::convertMatToQimage(tmp.clone()), "Threshold adaptativo (paper)");
-    // Aplicación del algoritmo de Canny: Ratio max:min, 2:1 o 3:1
-    Canny(tmp, tmp, C_THRES_CANNY, C_THRES_CANNY * C_FACTOR_CANNY);
-    //visualizer->visualizeImage(PROC3, ImageHelper::convertMatToQimage(tmp.clone()), "Canny");
+    visualizer->visualizeImage(PROC2, ImageHelper::convertMatToQimage(tmp.clone()), "Threshold adaptativo (paper)");
     // Obtención del ROI
     cout << "findROI_rings " << endl;
     keypoints = findROI_rings(tmp.clone(), tmp);
-
-    // calculo de tiempo para el final de la deteccion
-//    int64 e2 = cv::getTickCount();
-    //double time = (e2 - e1)/ cv::getTickFrequency();
-//    double time = (e2-e1) / 1000;
-
-//    double timesum = timesum + time;
-//    cout<<"timesum: "<<timesum<<endl;
-//    cout<<"TIEMPO: "<<time<<"ms"<<endl;
-
-    //visualizer->visualizeImage(PROC4, ImageHelper::convertMatToQimage(tmp.clone()), "ROI");
+    visualizer->visualizeImage(PROC3, ImageHelper::convertMatToQimage(tmp.clone()), "ROI");
+    // Obtención de los centros finales
+    cout << "cleanNoiseUsingDistances " << endl;
+    keypoints = cleanNoiseUsingDistances(keypoints, tmp);
+    visualizer->visualizeImage(PROC4, ImageHelper::convertMatToQimage(tmp), "Reduccion de ruido con distancias y KF");
     // Si no se tiene completo el patron, se descarta el frame
     cout << "trackingPoints Rings" << endl;
     bool trackCorrect = trackingRingsPoints(keypoints);
@@ -928,13 +913,12 @@ bool PatternDetector::processingCirclesPattern(std::vector<Point2f> &keypoints)
     visualizer->visualizeImage(PROC4, ImageHelper::convertMatToQimage(tmp.clone()), "ROI");
     // Obtención de los centros finales
     //cout << "findFinalCenters_circles " << endl;
-    //keypoints = findFinalCenters_circles(keypoints, tmp);
+    keypoints = findFinalCenters_circles(keypoints, tmp);
     // Tracking&Etiquetado de los centros finales o puntos
     //cout << "trackingPoints Circles " << endl;
     bool trackCorrect = trackingCirclePoints(keypoints);
     //cout << endl << endl;
     return trackCorrect;
-    //return true;
 }
 
 bool PatternDetector::trackingCirclePoints(vector<Point2f> &keypoints) {
@@ -966,7 +950,7 @@ bool PatternDetector::trackingCirclePoints(vector<Point2f> &keypoints) {
 
     // ESCOGEMOS LA PRIMERA Y ULTIMA COLUMNA DEL PATRON EN BASE A LA DISTANCIA
     vectorDis = trackGrid->sortByDistWithPoint(vectorDis);
-    if(vectorDis.size() != 6){
+    if(vectorDis.size() != 5){
         return false;
     }else{
         for(int i = 0; i < (int)posCornes.size(); i++){
@@ -1261,7 +1245,7 @@ bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
             aux.push_back(make_pair(A.x,A.y));
             aux.push_back(make_pair(B.x,B.y));
 
-            if((int)aux.size()==6){
+            if((int)aux.size()==4){
                 //Ordenando Ascendentemente x, descendentemente y
                 sort(aux.begin(),aux.end(),cmp);
                 ans.push_back(aux);
@@ -1322,7 +1306,7 @@ bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
             int counter = 0;  // Contador para etiquetar los puntos
             keypoints.clear();
             // Extraendo los elementos de la pila
-            /*while(!pila.empty()){
+            while(!pila.empty()){
                 // Escribiendo numeros
                 for(int i=0;i<pila.top().size();i++){
                     stringstream sstr;
@@ -1332,11 +1316,13 @@ bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
                     keypoints.push_back(Point2f(pila.top()[i].first,pila.top()[i].second));
                 }
                 pila.pop();
-            }*/
+            }
         }
         imshow("RESULTADO FINAL", img);
     }
+
     visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(img), "Resultado Final");
+
     return true;
 }
 

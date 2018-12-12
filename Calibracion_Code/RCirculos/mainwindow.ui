@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1331</width>
-    <height>614</height>
+    <width>1510</width>
+    <height>687</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,10 +17,10 @@
    <widget class="QLabel" name="winProc1">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>130</y>
-      <width>221</width>
-      <height>191</height>
+      <x>300</x>
+      <y>100</y>
+      <width>261</width>
+      <height>231</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -36,10 +36,10 @@
    <widget class="QLabel" name="winFinalRes">
     <property name="geometry">
      <rect>
-      <x>750</x>
-      <y>60</y>
-      <width>551</width>
-      <height>491</height>
+      <x>870</x>
+      <y>100</y>
+      <width>611</width>
+      <height>391</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -55,10 +55,10 @@
    <widget class="QLabel" name="winProc2">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>130</y>
-      <width>211</width>
-      <height>191</height>
+      <x>580</x>
+      <y>100</y>
+      <width>261</width>
+      <height>231</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -74,29 +74,10 @@
    <widget class="QLabel" name="winProc3">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>350</y>
-      <width>231</width>
-      <height>191</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">border: 1px solid gray;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="scaledContents">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="winProc4">
-    <property name="geometry">
-     <rect>
-      <x>520</x>
-      <y>350</y>
-      <width>221</width>
-      <height>191</height>
+      <x>300</x>
+      <y>380</y>
+      <width>261</width>
+      <height>231</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -112,8 +93,8 @@
    <widget class="QPushButton" name="btnLoadVideo">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>300</y>
+      <x>40</x>
+      <y>390</y>
       <width>99</width>
       <height>27</height>
      </rect>
@@ -128,14 +109,14 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>300</y>
+      <x>150</x>
+      <y>390</y>
       <width>99</width>
       <height>27</height>
      </rect>
     </property>
     <property name="text">
-     <string>Run Project</string>
+     <string>Start</string>
     </property>
    </widget>
    <widget class="QLabel" name="lblMsg">
@@ -154,8 +135,8 @@
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>80</y>
+      <x>30</x>
+      <y>150</y>
       <width>201</width>
       <height>191</height>
      </rect>
@@ -166,7 +147,7 @@
      </font>
     </property>
     <property name="title">
-     <string>PATTS</string>
+     <string>Patrón</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -186,7 +167,7 @@
       </font>
      </property>
      <property name="text">
-      <string>PATT CIRCLE</string>
+      <string>Patrón circular</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -207,7 +188,7 @@
       </font>
      </property>
      <property name="text">
-      <string>PATT RING</string>
+      <string>Patrón anillo</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="numRows">
@@ -298,58 +279,33 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QLabel" name="label_5">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>150</y>
-       <width>101</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Distancia (mm):</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="centersDistance">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>150</y>
-       <width>61</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="readOnly">
-      <bool>false</bool>
-     </property>
-    </widget>
+   </widget>
+   <widget class="QLabel" name="winProc5">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>380</y>
+      <width>261</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid gray;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QLabel" name="subtitle3">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>330</y>
-      <width>231</width>
-      <height>16</height>
+      <x>300</x>
+      <y>360</y>
+      <width>261</width>
+      <height>17</height>
      </rect>
     </property>
     <property name="font">
@@ -369,10 +325,10 @@
    <widget class="QLabel" name="subtitle2">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>110</y>
-      <width>211</width>
-      <height>16</height>
+      <x>580</x>
+      <y>80</y>
+      <width>261</width>
+      <height>17</height>
      </rect>
     </property>
     <property name="font">
@@ -392,10 +348,10 @@
    <widget class="QLabel" name="subtitle1">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>100</y>
-      <width>221</width>
-      <height>16</height>
+      <x>300</x>
+      <y>80</y>
+      <width>261</width>
+      <height>17</height>
      </rect>
     </property>
     <property name="font">
@@ -412,13 +368,13 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="subtitle4">
+   <widget class="QLabel" name="subtitle5">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>330</y>
-      <width>201</width>
-      <height>16</height>
+      <x>580</x>
+      <y>360</y>
+      <width>261</width>
+      <height>17</height>
      </rect>
     </property>
     <property name="font">
@@ -438,8 +394,8 @@
    <widget class="QLabel" name="mainTitle">
     <property name="geometry">
      <rect>
-      <x>750</x>
-      <y>20</y>
+      <x>880</x>
+      <y>50</y>
       <width>261</width>
       <height>17</height>
      </rect>
@@ -452,17 +408,17 @@
      </font>
     </property>
     <property name="text">
-     <string>CALIBRATION OF VIDEO</string>
+     <string>RESULTADO FINAL</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>20</y>
+      <y>40</y>
       <width>231</width>
       <height>16</height>
      </rect>
@@ -484,11 +440,11 @@
      <string>CALIBRATION OF CAMERA</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>40</y>
+      <y>60</y>
       <width>491</width>
       <height>31</height>
      </rect>
@@ -516,7 +472,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1331</width>
+     <width>1510</width>
      <height>22</height>
     </rect>
    </property>
