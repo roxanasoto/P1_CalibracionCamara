@@ -127,7 +127,14 @@ void MainWindow::on_rbRing_clicked()
     //ui->centersDistance->setText("50");
 }
 
+// TIME & ACCURACY
+void MainWindow::visualizeTimeExec(int totalFrames, int framesAna, double accu ,double timeValue){
 
+    ui->leTFrames->setText(QString::number(totalFrames));
+    ui->leAnalized->setText(QString::number(framesAna));
+    ui->leAccu->setText(QString::number(accu));
+    ui->timeExec->setText(QString::number(timeValue));
 
+}
 
 

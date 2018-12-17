@@ -235,6 +235,12 @@ void CameraCalibrator::processingPattern()
 
     cout << "=====================\n";
     cout << "Total Frames: " << framesTotal << "\nFrames Analizados: " << framesAnalyzed << "\n% Analisis: " << (framesAnalyzed * 1.0 / framesTotal) << "\n AVG: "<<average_time<< endl;
+
+    // Mostrar el analisis de Tiempo y Frames
+
+    visualizer->visualizeTimeExec(framesTotal,framesAnalyzed ,(framesAnalyzed * 1.0 / framesTotal), average_time);
+//    visualizer->visualizeTimeExec((framesAnalyzed * 1.0 / framesTotal));
+
     cout << "=====================\n";
 
 }
