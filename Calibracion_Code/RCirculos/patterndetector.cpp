@@ -683,7 +683,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
         }
         return patternActual2;
 }
-/*
+
 ///
 /// \brief PatternDetector::cleanNoiseUsingDistances   Funcion que elimina ruido usando las distancias entre los puntos
 /// \param keypoints    Vector de centros de los contornos
@@ -795,7 +795,7 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
     return patternActual;
 }
 
-*/
+
 void PatternDetector::drawZigZagPattern(vector<Point2f> gridPoints, vector<StruSegme> vectSeg, Mat imageRaw, int gross, int flag){
 
     // DIBUJAMOS EL PATRON ORIENTADO de acuerdo a flag
@@ -875,6 +875,12 @@ bool PatternDetector::processingRingsPattern(std::vector<Point2f> &keypoints)
     cout << "findROI_rings " << endl;
     keypoints = findROI_rings(tmp.clone(), tmp);
     visualizer->visualizeImage(PROC3, ImageHelper::convertMatToQimage(tmp.clone()), "ROI");
+    // limpiar y obtener los puntos finales
+    cout<<"keypoint size: "<<keypoints.size()<<endl;
+    keypoints = cleanNoiseUsingDistances(keypoints, tmp);
+
+    cout<<"keypoints no noise: "<<keypoints.size()<<endl;
+
     cout << "trackingPoints Rings" << endl;
     bool trackCorrect = trackingRingsPoints(keypoints);
     cout << "trancking correct" ;

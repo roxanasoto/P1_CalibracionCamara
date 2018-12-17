@@ -16,7 +16,8 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     trackingGrid.cpp \
     patterndetector.cpp \
-    cameracalibrator.cpp
+    cameracalibrator.cpp \
+    kftracking.cpp
 
 HEADERS  += mainwindow.h \
     image.h \
@@ -25,7 +26,8 @@ HEADERS  += mainwindow.h \
     Geometria.h \
     Statistics.h \
     patterndetector.h \
-    cameracalibrator.h
+    cameracalibrator.h \
+    kftracking.h
 
 FORMS    += mainwindow.ui
 

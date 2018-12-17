@@ -54,12 +54,14 @@ SOURCES       = ../RCirculos/main.cpp \
 		../RCirculos/mainwindow.cpp \
 		../RCirculos/trackingGrid.cpp \
 		../RCirculos/patterndetector.cpp \
-		../RCirculos/cameracalibrator.cpp moc_mainwindow.cpp
+		../RCirculos/cameracalibrator.cpp \
+		../RCirculos/kftracking.cpp moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		trackingGrid.o \
 		patterndetector.o \
 		cameracalibrator.o \
+		kftracking.o \
 		moc_mainwindow.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -115,6 +117,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
+		../RCirculos/.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -141,11 +144,13 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		../RCirculos/Geometria.h \
 		../RCirculos/Statistics.h \
 		../RCirculos/patterndetector.h \
-		../RCirculos/cameracalibrator.h ../RCirculos/main.cpp \
+		../RCirculos/cameracalibrator.h \
+		../RCirculos/kftracking.h ../RCirculos/main.cpp \
 		../RCirculos/mainwindow.cpp \
 		../RCirculos/trackingGrid.cpp \
 		../RCirculos/patterndetector.cpp \
-		../RCirculos/cameracalibrator.cpp
+		../RCirculos/cameracalibrator.cpp \
+		../RCirculos/kftracking.cpp
 QMAKE_TARGET  = RCirculos
 DESTDIR       = 
 TARGET        = RCirculos
@@ -211,6 +216,7 @@ Makefile: ../RCirculos/RCirculos.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -289,6 +295,7 @@ Makefile: ../RCirculos/RCirculos.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf:
@@ -327,8 +334,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../RCirculos/mainwindow.h ../RCirculos/image.h ../RCirculos/trackingGrid.h ../RCirculos/constantParams.h ../RCirculos/Geometria.h ../RCirculos/Statistics.h ../RCirculos/patterndetector.h ../RCirculos/cameracalibrator.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../RCirculos/main.cpp ../RCirculos/mainwindow.cpp ../RCirculos/trackingGrid.cpp ../RCirculos/patterndetector.cpp ../RCirculos/cameracalibrator.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../RCirculos/mainwindow.h ../RCirculos/image.h ../RCirculos/trackingGrid.h ../RCirculos/constantParams.h ../RCirculos/Geometria.h ../RCirculos/Statistics.h ../RCirculos/patterndetector.h ../RCirculos/cameracalibrator.h ../RCirculos/kftracking.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../RCirculos/main.cpp ../RCirculos/mainwindow.cpp ../RCirculos/trackingGrid.cpp ../RCirculos/patterndetector.cpp ../RCirculos/cameracalibrator.cpp ../RCirculos/kftracking.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../RCirculos/mainwindow.ui $(DISTDIR)/
 
 
@@ -429,6 +436,9 @@ cameracalibrator.o: ../RCirculos/cameracalibrator.cpp ../RCirculos/cameracalibra
 		../RCirculos/trackingGrid.h \
 		../RCirculos/image.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o cameracalibrator.o ../RCirculos/cameracalibrator.cpp
+
+kftracking.o: ../RCirculos/kftracking.cpp ../RCirculos/KFTracking.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o kftracking.o ../RCirculos/kftracking.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
