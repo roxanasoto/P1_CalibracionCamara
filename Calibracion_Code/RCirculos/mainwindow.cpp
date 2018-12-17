@@ -136,5 +136,10 @@ void MainWindow::visualizeTimeExec(int totalFrames, int framesAna, double accu ,
     ui->timeExec->setText(QString::number(timeValue));
 
 }
+// tiempo real time
+void MainWindow::visualizetimeReal(double timeframe)
+{
+    ui->leTFrames->setText(QString::number(timeframe));
+}
 
 

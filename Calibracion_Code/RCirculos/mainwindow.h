@@ -23,6 +23,7 @@ public:
     void visualizeImage(int id, QImage img, std::string title="");
     void cleanImage(int id);
     void visualizeTimeExec(int totalFrames, int framesAna, double accu ,double timeValue);
+    void visualizetimeReal(double tframe);
 
 private slots:
     void on_btnLoadVideo_clicked();

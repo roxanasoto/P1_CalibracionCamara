@@ -1,9 +1,3 @@
-//#include "kftracking.h"
-
-//KFTracking::KFTracking()
-//{
-
-//}
 #ifndef KFTRACKING_CPP
 #define KFTRACKING_CPP
 

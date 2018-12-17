@@ -214,6 +214,7 @@ void CameraCalibrator::processingPattern()
                 tm.start();
                 status = pattDetector->processingRingsPattern(keypoints);
                 tm.stop();
+                visualizer->visualizetimeReal(tm.getTimeMilli() / tm.getCounter());
                 break;
         }
         // preguntamos si encontro el patron
@@ -237,7 +238,6 @@ void CameraCalibrator::processingPattern()
     cout << "Total Frames: " << framesTotal << "\nFrames Analizados: " << framesAnalyzed << "\n% Analisis: " << (framesAnalyzed * 1.0 / framesTotal) << "\n AVG: "<<average_time<< endl;
 
     // Mostrar el analisis de Tiempo y Frames
-
     visualizer->visualizeTimeExec(framesTotal,framesAnalyzed ,(framesAnalyzed * 1.0 / framesTotal), average_time);
 //    visualizer->visualizeTimeExec((framesAnalyzed * 1.0 / framesTotal));
 

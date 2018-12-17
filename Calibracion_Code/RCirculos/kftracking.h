@@ -1,15 +1,3 @@
-//#ifndef KFTRACKING_H
-//#define KFTRACKING_H
-
-
-//class KFTracking
-//{
-//public:
-//    KFTracking();
-//};
-
-//#endif // KFTRACKING_H
-
 #ifndef KFTRACKING_H
 #define KFTRACKING_H
 

@@ -649,6 +649,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
 
         // TRACKING GRID BOLITAS
         if((int)patternActual.size() <= maximobolitas){
+            //obtener el centro de mi conjunto
             Point2f centroide = trackGrid->getCentroide(patternActual);
             circle(frameDraw, Point(centroide.x, centroide.y), 4, MY_COLOR_GREEN, -1);
 
@@ -693,11 +694,13 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
 vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoints, Mat &imgOut)
 {
     int maximobolitas = numRows * numCols;
-    patternActual.clear();
 
+    patternActual.clear();
+    cout<<"=>"<<(int)keypoints.size()<<endl;
     if((int)keypoints.size() <= maximobolitas){
         patternActual = keypoints;
     }else {
+        cout<<"keypoints size: "<<(int)keypoints.size()<<endl;
         int factDist = 2;
         // Calculamos las distancias de uno vs todos
         vector<pair<float, pair<int,int> > > distances;
@@ -718,7 +721,7 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
         vector<pair<int, float> > freqs;
         vector<pair<pair<float,float>, pair<int,int> > > extraInfo;
         int posMode, modeVal;
-        stats::getFrequences<float,pair<int,int> >(distances, freqs, extraInfo, false, 5);
+        stats::getFrequences<float,pair<int,int> >(distances, freqs, extraInfo, false, 4);
         stats::getMode(freqs, modeVal, posMode);
         cout << "MODE: " << freqs[posMode].second << endl;
 
@@ -760,6 +763,7 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
         patternActual.push_back(Point2f(posX,posY));
     }
 
+     cout<<"-> "<<(int)patternActual.size()<<endl;
     // TRACKING GRID ANILLOS
     if((int)patternActual.size() <= maximobolitas){
         Point2f centroide = trackGrid->getCentroide(patternActual);
@@ -774,27 +778,29 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
         arrayMat->push_back(tempKF);
 
         //primera vez que aparece el patron
-        if(kfTracking->firstFound[0]){
-            kfTracking->setStateInit(arrayMat);
-            kfTracking->firstFound[0] = false;
+//        cout<<"FIRST FOUND"<<kfTracking->firstFound[0]<<endl;
+//        if(kfTracking->firstFound[0]){
+        if(1){
+//            kfTracking->setStateInit(arrayMat);
+//            kfTracking->firstFound[0] = false;
         }else{
-            kfTracking->predict(dtKFTrac);
-            vector<Mat>* correct = kfTracking->kalmanCorrection(arrayMat);
-            vector<Mat>* matForPre = kfTracking->futureNTime(1);
-            centNextPred = make_pair((*matForPre)[0].at<float>(0), (*matForPre)[0].at<float>(1));
-            for(int i =0; i < (int)correct->size(); i++){
-                circle(imgOut, Point2f((*correct)[i].at<float>(0),(*correct)[i].at<float>(1)), 4, MY_COLOR_RED,-1);
-                circle(imgOut, Point2f((*matForPre)[i].at<float>(0),(*matForPre)[i].at<float>(1)),3, MY_COLOR_WHITE,-1);
-                line(imgOut,Point2f(centroide.x,centroide.y), Point2f((*matForPre)[i].at<float>(0),(*matForPre)[i].at<float>(1)),MY_COLOR_WHITE,1,8,0);
-            }
+//            kfTracking->predict(dtKFTrac);
+//            vector<Mat>* correct = kfTracking->kalmanCorrection(arrayMat);
+//            vector<Mat>* matForPre = kfTracking->futureNTime(1);
+//            centNextPred = make_pair((*matForPre)[0].at<float>(0), (*matForPre)[0].at<float>(1));
+//            for(int i =0; i < (int)correct->size(); i++){
+//                circle(imgOut, Point2f((*correct)[i].at<float>(0),(*correct)[i].at<float>(1)), 4, MY_COLOR_RED,-1);
+//                circle(imgOut, Point2f((*matForPre)[i].at<float>(0),(*matForPre)[i].at<float>(1)),3, MY_COLOR_WHITE,-1);
+//                line(imgOut,Point2f(centroide.x,centroide.y), Point2f((*matForPre)[i].at<float>(0),(*matForPre)[i].at<float>(1)),MY_COLOR_WHITE,1,8,0);
+//            }
         }
     }
+
     if((int)patternActual.size() <= maximobolitas){
         patternBefore = patternActual;
     }
     return patternActual;
 }
-
 
 void PatternDetector::drawZigZagPattern(vector<Point2f> gridPoints, vector<StruSegme> vectSeg, Mat imageRaw, int gross, int flag){
 
@@ -876,11 +882,10 @@ bool PatternDetector::processingRingsPattern(std::vector<Point2f> &keypoints)
     keypoints = findROI_rings(tmp.clone(), tmp);
     visualizer->visualizeImage(PROC3, ImageHelper::convertMatToQimage(tmp.clone()), "ROI");
     // limpiar y obtener los puntos finales
-    cout<<"keypoint size: "<<keypoints.size()<<endl;
+    //cout<<"keypoint size: "<<keypoints.size()<<endl;
+    cout << "cleanNoiseUsingDistances " << endl;
     keypoints = cleanNoiseUsingDistances(keypoints, tmp);
-
-    cout<<"keypoints no noise: "<<keypoints.size()<<endl;
-
+    visualizer->visualizeImage(PROC5, ImageHelper::convertMatToQimage(tmp), "Reduccion de ruido con distancias y KF");
     cout << "trackingPoints Rings" << endl;
     bool trackCorrect = trackingRingsPoints(keypoints);
     cout << "trancking correct" ;
@@ -1235,8 +1240,11 @@ vector<Point2f> ordenar(vector<Point2f> centros)
 
 bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
     //ordenar
-    keypoints.resize(20);
+//    keypoints.resize(20);
     keypoints = ordenar(keypoints);
+
+    if(keypoints.size() == numCols*numRows){
+
             cv::circle(img, keypoints[0], 10, Scalar(255, 0, 125));
             cv::putText(img,to_string(0),keypoints[0],cv::FONT_HERSHEY_SIMPLEX,0.5,CV_RGB(255,255,255),2);
 
@@ -1251,12 +1259,14 @@ bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
             {
                 cv::line(img, keypoints[i - 1], keypoints[i], MY_COLOR_GREEN);
             }
+          }
     //dibujar
-            imshow("RESULTADO FINAL", img);
+    imshow("RESULTADO FINAL", img);
 
     visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(img), "Resultado Final");
 
             return true;
+
     if(keypoints.size() != numCols * numRows) {
         return false;
     }
