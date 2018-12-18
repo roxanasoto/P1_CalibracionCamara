@@ -476,7 +476,7 @@
      </rect>
     </property>
     <property name="title">
-     <string> Time Acurracy</string>
+     <string> Time Accuracy</string>
     </property>
     <widget class="QLineEdit" name="leTFrames">
      <property name="geometry">
@@ -645,7 +645,7 @@
       <string>Accuracy %:</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="leTframe">
+    <widget class="QLineEdit" name="leTimeframe">
      <property name="geometry">
       <rect>
        <x>120</x>

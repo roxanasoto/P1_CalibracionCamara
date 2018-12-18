@@ -139,7 +139,13 @@ void MainWindow::visualizeTimeExec(int totalFrames, int framesAna, double accu ,
 // tiempo real time
 void MainWindow::visualizetimeReal(double timeframe)
 {
-    ui->leTFrames->setText(QString::number(timeframe));
+    ui->leTimeframe->setText(QString::number(timeframe)+"ms");
+
 }
 
+void MainWindow::visualizaframesReal(int sumFrame ){
+
+    ui->leAnalized->setText(QString::number(sumFrame));
+//    ui->leTFrames->setText(QString::number(sumTotalFrames));
+}
 

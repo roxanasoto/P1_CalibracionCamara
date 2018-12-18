@@ -194,9 +194,12 @@ void CameraCalibrator::processingPattern()
     map<uint, vector<Point2f> > mapFrames;
     vector<float> distances;
 
-    while (true && actived) {
+    cout<<"actived antes del while"<<actived<<endl;
+    while (actived){
         // Lectura de cada frame
+        cout<<"entro al whiile"<<endl;;
         video >> img;
+
         if (!img.data)
             break;
         framesTotal++;
@@ -217,15 +220,27 @@ void CameraCalibrator::processingPattern()
                 visualizer->visualizetimeReal(tm.getTimeMilli() / tm.getCounter());
                 break;
         }
+         cout<<"status0: "<<status<<endl;
         // preguntamos si encontro el patron
-        if(status) {
+        if(status ) {
+            //imwrite(folderOutVideo + "/frame_" + num2str<int>(framesTotal) + "_mal.png", tmp);
+            cout<<"ACTIVATE0: "<<actived<<endl;//1
+            //actived = 0;
+            cout<<"status: "<<status<<endl;
             framesAnalyzed++;
+            visualizer->visualizaframesReal(framesAnalyzed);
             mapFrames[framesTotal] = keypoints;
-            //imwrite(folderOutVideo + "/frame_" + num2str<int>(framesTotal) + ".png", tmp);
+            // Pasamos al siguiente frame
+//            video >> img;
+            cout<<"ACTIVATE1: "<<actived<<endl;
         }
         else {
-            //imwrite(folderOutVideo + "/frame_" + num2str<int>(framesTotal) + "_mal.png", tmp);
-            continue; // Pasamos al siguiente frame
+
+            cout<<"actived del else "<<actived<<endl;
+            //status = true;
+            //setActived(true);
+            //actived= true;
+            continue;         //imwrite(folderOutVideo + "/frame_" + num2str<int>(framesTotal) + ".png", tmp);
         }
 
         if (waitKey(10) >= 0)

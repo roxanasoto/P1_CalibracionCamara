@@ -24,6 +24,7 @@ public:
     void cleanImage(int id);
     void visualizeTimeExec(int totalFrames, int framesAna, double accu ,double timeValue);
     void visualizetimeReal(double tframe);
+    void visualizaframesReal(int sumFrame);
 
 private slots:
     void on_btnLoadVideo_clicked();
