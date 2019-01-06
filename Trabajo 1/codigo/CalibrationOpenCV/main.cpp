@@ -26,7 +26,7 @@ class Settings
 {
 public:
     Settings() : goodInput(false) {}
-    enum Pattern { NOT_EXISTING, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID };
+    enum Pattern { NOT_EXISTING,CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID /*, RING_GRID, ASYMMETRIC_RING_GRID*/};
     enum InputType { INVALID, CAMERA, VIDEO_FILE, IMAGE_LIST };
 
     void write(FileStorage& fs) const                        //Write serialization for this class
@@ -126,8 +126,11 @@ public:
 
 
         calibrationPattern = NOT_EXISTING;
+        if (!patternToUse.compare("CHESSBOARD")) calibrationPattern = CHESSBOARD;
         if (!patternToUse.compare("CIRCLES_GRID")) calibrationPattern = CIRCLES_GRID;
         if (!patternToUse.compare("ASYMMETRIC_CIRCLES_GRID")) calibrationPattern = ASYMMETRIC_CIRCLES_GRID;
+        /*if (!patternToUse.compare("RING_GRID")) calibrationPattern = RING_GRID;
+        if (!patternToUse.compare("ASYMMETRIC_RING_GRID")) calibrationPattern = ASYMMETRIC_RING_GRID;*/
         if (calibrationPattern == NOT_EXISTING)
         {
             cerr << " Inexistent camera calibration mode: " << patternToUse << endl;
@@ -243,6 +246,7 @@ static void calcBoardCornerPositions(Size boardSize, float squareSize, vector<Po
 
     switch (patternType)
     {
+    case Settings::CHESSBOARD:
     case Settings::CIRCLES_GRID:
         for (int i = 0; i < boardSize.height; ++i)
             for (int j = 0; j < boardSize.width; ++j)
@@ -254,6 +258,17 @@ static void calcBoardCornerPositions(Size boardSize, float squareSize, vector<Po
             for (int j = 0; j < boardSize.width; j++)
                 corners.push_back(Point3f(float((2 * j + i % 2)*squareSize), float(i*squareSize), 0));
         break;
+    /*case Settings::RING_GRID:
+        for (int i = 0; i < boardSize.height; ++i)
+            for (int j = 0; j < boardSize.width; ++j)
+                corners.push_back(Point3f(float(j*squareSize), float(i*squareSize), 0));
+        break;
+
+    case Settings::ASYMMETRIC_RING_GRID:
+        for (int i = 0; i < boardSize.height; i++)
+            for (int j = 0; j < boardSize.width; j++)
+                corners.push_back(Point3f(float((2 * j + i % 2)*squareSize), float(i*squareSize), 0));
+        break;*/
     default:
         break;
     }
@@ -440,12 +455,21 @@ int main(int argc, char* argv[])
         bool found;
         switch (s.calibrationPattern) // Find feature points on the input format
         {
+        case Settings::CHESSBOARD:
+            found = findChessboardCorners( view, s.boardSize, pointBuf,CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
+            break;
         case Settings::CIRCLES_GRID:
             found = findCirclesGrid(view, s.boardSize, pointBuf);
             break;
         case Settings::ASYMMETRIC_CIRCLES_GRID:
             found = findCirclesGrid(view, s.boardSize, pointBuf, CALIB_CB_ASYMMETRIC_GRID);
             break;
+        /*case Settings::RING_GRID:
+            found = findCirclesGrid(view, s.boardSize, pointBuf);
+            break;
+        case Settings::ASYMMETRIC_RING_GRID:
+            found = findCirclesGrid(view, s.boardSize, pointBuf, CALIB_CB_ASYMMETRIC_GRID);
+            break;*/
         default:
             found = false;
             break;
@@ -453,6 +477,14 @@ int main(int argc, char* argv[])
 
         if (found)                // If done with success,
         {
+            // improve the found corners' coordinate accuracy for chessboard
+           if( s.calibrationPattern == Settings::CHESSBOARD)
+           {
+               Mat viewGray;
+                               cvtColor(view, viewGray, COLOR_BGR2GRAY);
+                               cornerSubPix( viewGray, pointBuf, Size(11,11),
+                                   Size(-1,-1), TermCriteria( CV_TERMCRIT_EPS+CV_TERMCRIT_ITER, 30, 0.1 ));
+           }
             if (mode == CAPTURING &&  // For camera only take new samples after delay time
                 (!s.inputCapture.isOpened() || clock() - prevTimestamp > s.delay*1e-3*CLOCKS_PER_SEC))
             {
