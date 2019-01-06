@@ -2,7 +2,8 @@
 Curso de Imagenes 
 Estudiantes:
 - Roxana Soto
-- Wilderd 
+- Wilderd
+
 En este repositorio se presentan dos trabajos con respecto al curso de Imagenes  
 ## Trabajo 1
 Proyecto de Calibracion de Camara usando videos en tiempo real  
