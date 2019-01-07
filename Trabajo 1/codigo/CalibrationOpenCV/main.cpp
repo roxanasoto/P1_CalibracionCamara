@@ -2,31 +2,39 @@
 #include <sstream>
 #include <time.h>
 #include <stdio.h>
+#include <QString>
 
-#include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/highgui.hpp>
 
 #ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
+# define _CRT_SECURE_NO_WARNINGS
 #endif
 
 using namespace cv;
 using namespace std;
 
+string doubleToStr(double number){
+
+    std::ostringstream strs;
+    strs << number;
+    std::string str = strs.str();
+
+    return  str;
+}
 static void help(){
-    cout << "This is a camera calibration sample." << endl
-        << "Usage: calibration configurationFile" << endl
-        << "Near the sample file you'll find the configuration file, which has detailed help of "
+    cout << "Este es una muestra de calibracion ." << endl
+        << "Uso: en calibracion configurationFile " << endl
+        << " En la muestra de tu archivo tu vas a encontrarar the sample file you'll find the configuration file, which has detailed help of "
         "how to edit it.  It may be any OpenCV supported file format XML/YAML." << endl;
 }
 class Settings
 {
 public:
     Settings() : goodInput(false) {}
-    enum Pattern { NOT_EXISTING,CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID /*, RING_GRID, ASYMMETRIC_RING_GRID*/};
+    enum Pattern { NOT_EXISTING, CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID };
     enum InputType { INVALID, CAMERA, VIDEO_FILE, IMAGE_LIST };
 
     void write(FileStorage& fs) const                        //Write serialization for this class
@@ -129,8 +137,6 @@ public:
         if (!patternToUse.compare("CHESSBOARD")) calibrationPattern = CHESSBOARD;
         if (!patternToUse.compare("CIRCLES_GRID")) calibrationPattern = CIRCLES_GRID;
         if (!patternToUse.compare("ASYMMETRIC_CIRCLES_GRID")) calibrationPattern = ASYMMETRIC_CIRCLES_GRID;
-        /*if (!patternToUse.compare("RING_GRID")) calibrationPattern = RING_GRID;
-        if (!patternToUse.compare("ASYMMETRIC_RING_GRID")) calibrationPattern = ASYMMETRIC_RING_GRID;*/
         if (calibrationPattern == NOT_EXISTING)
         {
             cerr << " Inexistent camera calibration mode: " << patternToUse << endl;
@@ -258,17 +264,6 @@ static void calcBoardCornerPositions(Size boardSize, float squareSize, vector<Po
             for (int j = 0; j < boardSize.width; j++)
                 corners.push_back(Point3f(float((2 * j + i % 2)*squareSize), float(i*squareSize), 0));
         break;
-    /*case Settings::RING_GRID:
-        for (int i = 0; i < boardSize.height; ++i)
-            for (int j = 0; j < boardSize.width; ++j)
-                corners.push_back(Point3f(float(j*squareSize), float(i*squareSize), 0));
-        break;
-
-    case Settings::ASYMMETRIC_RING_GRID:
-        for (int i = 0; i < boardSize.height; i++)
-            for (int j = 0; j < boardSize.width; j++)
-                corners.push_back(Point3f(float((2 * j + i % 2)*squareSize), float(i*squareSize), 0));
-        break;*/
     default:
         break;
     }
@@ -291,7 +286,8 @@ static bool runCalibration(Settings& s, Size& imageSize, Mat& cameraMatrix, Mat&
     objectPoints.resize(imagePoints.size(), objectPoints[0]);
 
     //Find intrinsic and extrinsic camera parameters
-    double rms = calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs, s.flag | CALIB_FIX_K4 | CALIB_FIX_K5);
+    double rms = calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix,
+        distCoeffs, rvecs, tvecs, s.flag | CALIB_FIX_K4 | CALIB_FIX_K5);
 
     cout << "Re-projection error reported by calibrateCamera: " << rms << endl;
 
@@ -402,20 +398,30 @@ bool runCalibrationAndSave(Settings& s, Size imageSize, Mat&  cameraMatrix, Mat&
 
 int main(int argc, char* argv[])
 {
-    help();
+//    help();
+
     Settings s;
+
+
+    //Variable tiempo
+    TickMeter tm;
+    double timeAVG;
+    int TotalFrames = 0, FramesAnalyzed = 0;
+    int64 t0,t1,sum = 0;
+    double secsum = 0;
+    double secs;
+
     const string inputSettingsFile = argc > 1 ? argv[1] : "in_VID5.xml";
-    FileStorage fs(inputSettingsFile, FileStorage::READ); // Read the settings
-    if (!fs.isOpened()){
-        cout << "Could not open the configuration file: \"" << inputSettingsFile << "\"" << endl;
+    FileStorage fs(inputSettingsFile, FileStorage::READ); // Leer el archivo setting
+    if (!fs.isOpened()){ // si esta abierto
+        cout << "No se puede abrir el archivo de configuracion: \"" << inputSettingsFile << "\"" << endl;
         return -1;
     }
 
     fs["Settings"] >> s;
-
-    fs.release();                                         // close Settings file
+    fs.release(); // cerrar el archivo Settings
     if (!s.goodInput){
-        cout << "Invalid input detected. Application stopping. " << endl;
+        cout << "Entrada Invalidad detectdata. Application stopping. " << endl;
         return -1;
     }
 
@@ -424,15 +430,22 @@ int main(int argc, char* argv[])
     Size imageSize;
     int mode = s.inputType == Settings::IMAGE_LIST ? CAPTURING : DETECTION;
     clock_t prevTimestamp = 0;
+
     const Scalar RED(0, 0, 255), GREEN(0, 255, 0);
+
     const char ESC_KEY = 27;
 
+
+    //ejecutamos infinitamente los frames
     for (int i = 0;; ++i){
+
         Mat view;
         bool blinkOutput = false;
 
         view = s.nextImage();
 
+        // contar frames
+        TotalFrames++;
         //-----  If no more image, or got enough, then stop calibration and show result -------------
         if (mode == CAPTURING && imagePoints.size() >= (unsigned)s.nrFrames){
             if (runCalibrationAndSave(s, imageSize, cameraMatrix, distCoeffs, imagePoints))
@@ -452,39 +465,38 @@ int main(int argc, char* argv[])
 
         vector<Point2f> pointBuf;
 
+
         bool found;
         switch (s.calibrationPattern) // Find feature points on the input format
         {
-        case Settings::CHESSBOARD:
-            found = findChessboardCorners( view, s.boardSize, pointBuf,CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
-            break;
-        case Settings::CIRCLES_GRID:
-            found = findCirclesGrid(view, s.boardSize, pointBuf);
-            break;
-        case Settings::ASYMMETRIC_CIRCLES_GRID:
-            found = findCirclesGrid(view, s.boardSize, pointBuf, CALIB_CB_ASYMMETRIC_GRID);
-            break;
-        /*case Settings::RING_GRID:
-            found = findCirclesGrid(view, s.boardSize, pointBuf);
-            break;
-        case Settings::ASYMMETRIC_RING_GRID:
-            found = findCirclesGrid(view, s.boardSize, pointBuf, CALIB_CB_ASYMMETRIC_GRID);
-            break;*/
-        default:
-            found = false;
-            break;
+            case Settings::CHESSBOARD:
+                //inicio tiempo
+                tm.start();
+                sum++;
+                t0 = getTickCount();
+                found = findChessboardCorners( view, s.boardSize, pointBuf,CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
+                //salida tiempo
+                tm.stop();
+                timeAVG = tm.getTimeMilli() / tm.getCounter();
+                break;
+            case Settings::CIRCLES_GRID:
+                found = findCirclesGrid(view, s.boardSize, pointBuf);
+                break;
+            case Settings::ASYMMETRIC_CIRCLES_GRID:
+                found = findCirclesGrid(view, s.boardSize, pointBuf, CALIB_CB_ASYMMETRIC_GRID);
+                tm.stop();
+                break;
+            default:
+                found = false;
+                break;
         }
 
         if (found)                // If done with success,
         {
-            // improve the found corners' coordinate accuracy for chessboard
-           if( s.calibrationPattern == Settings::CHESSBOARD)
-           {
-               Mat viewGray;
-                               cvtColor(view, viewGray, COLOR_BGR2GRAY);
-                               cornerSubPix( viewGray, pointBuf, Size(11,11),
-                                   Size(-1,-1), TermCriteria( CV_TERMCRIT_EPS+CV_TERMCRIT_ITER, 30, 0.1 ));
-           }
+
+            sum++;
+            FramesAnalyzed++; // frame analizados
+
             if (mode == CAPTURING &&  // For camera only take new samples after delay time
                 (!s.inputCapture.isOpened() || clock() - prevTimestamp > s.delay*1e-3*CLOCKS_PER_SEC))
             {
@@ -495,11 +507,30 @@ int main(int argc, char* argv[])
 
             // Draw the corners.
             drawChessboardCorners(view, s.boardSize, Mat(pointBuf), found);
+
+            t1 = getTickCount();
+            secs = (t1-t0)/getTickFrequency();
         }
 
+
+        secs = secs*1000;
+        secsum = secsum + timeAVG;
+        string a = doubleToStr(FramesAnalyzed);
+        string b = doubleToStr(TotalFrames);
+        std::ostringstream strs;
+        strs << timeAVG;
+        std::string str = strs.str();
+
+//        cout<<"Total Frames: "<<TotalFrames<<endl;
+//        cout<<"Frames Analizados: "<<FramesAnalyzed<<endl;
+        cout<<"Real time: "<<timeAVG<<endl;
+
+        str ="Total Frames : "+b+"  Frames Analizados: "+ a+" Time: "+ str;
+
+//          string str = "Press 'g' to start"+;
         //----------------------------- Output Text ------------------------------------------------
         string msg = (mode == CAPTURING) ? "100/100" :
-            mode == CALIBRATED ? "Calibrated" : "Press 'g' to start";
+            mode == CALIBRATED ?"Calibrated" : str;
         int baseLine = 0;
         Size textSize = getTextSize(msg, 1, 1, 1, &baseLine);
         Point textOrigin(view.cols - 2 * textSize.width - 10, view.rows - 2 * baseLine - 10);
@@ -539,5 +570,11 @@ int main(int argc, char* argv[])
             imagePoints.clear();
         }
     }
+
+    cout<<"Total Frames: "<<TotalFrames<<endl;
+    cout<<"Frames Analizados: "<<FramesAnalyzed<<endl;
+    cout<<"susm"<<secsum<<endl;
+    cout<<"Real time: "<<(double)secsum/sum<<" ms"<<endl;
+
     return 0;
 }
