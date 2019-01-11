@@ -1,7 +1,8 @@
+
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include <opencv/highgui.h>
+#include <highgui.h>
 #include <QImage>
 
 using namespace cv;

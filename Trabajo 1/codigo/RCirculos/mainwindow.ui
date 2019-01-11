@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1510</width>
-    <height>687</height>
+    <width>1683</width>
+    <height>886</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QLabel" name="winProc1">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>100</y>
+      <x>460</x>
+      <y>30</y>
       <width>261</width>
       <height>231</height>
      </rect>
@@ -36,8 +36,8 @@
    <widget class="QLabel" name="winFinalRes">
     <property name="geometry">
      <rect>
-      <x>870</x>
-      <y>100</y>
+      <x>1320</x>
+      <y>40</y>
       <width>611</width>
       <height>391</height>
      </rect>
@@ -55,8 +55,8 @@
    <widget class="QLabel" name="winProc2">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>100</y>
+      <x>750</x>
+      <y>30</y>
       <width>261</width>
       <height>231</height>
      </rect>
@@ -74,8 +74,27 @@
    <widget class="QLabel" name="winProc3">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>380</y>
+      <x>1030</x>
+      <y>30</y>
+      <width>261</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid gray;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="winProc4">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>310</y>
       <width>261</width>
       <height>231</height>
      </rect>
@@ -93,8 +112,8 @@
    <widget class="QPushButton" name="btnLoadVideo">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>330</y>
+      <x>10</x>
+      <y>90</y>
       <width>99</width>
       <height>27</height>
      </rect>
@@ -109,8 +128,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>330</y>
+      <x>30</x>
+      <y>690</y>
       <width>99</width>
       <height>27</height>
      </rect>
@@ -122,8 +141,8 @@
    <widget class="QLabel" name="lblMsg">
     <property name="geometry">
      <rect>
-      <x>1010</x>
-      <y>790</y>
+      <x>150</x>
+      <y>690</y>
       <width>351</width>
       <height>31</height>
      </rect>
@@ -135,9 +154,9 @@
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>100</y>
-      <width>231</width>
+      <x>10</x>
+      <y>130</y>
+      <width>201</width>
       <height>191</height>
      </rect>
     </property>
@@ -196,7 +215,7 @@
       <rect>
        <x>120</x>
        <y>120</y>
-       <width>81</width>
+       <width>61</width>
        <height>21</height>
       </rect>
      </property>
@@ -229,7 +248,7 @@
       </font>
      </property>
      <property name="text">
-      <string>N° filas:</string>
+      <string>N° elems/col:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -263,7 +282,7 @@
       <rect>
        <x>120</x>
        <y>90</y>
-       <width>81</width>
+       <width>61</width>
        <height>21</height>
       </rect>
      </property>
@@ -279,12 +298,132 @@
       <bool>true</bool>
      </property>
     </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>150</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Distancia (mm):</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="centersDistance">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>150</y>
+       <width>61</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="readOnly">
+      <bool>false</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QLabel" name="winProc5">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>380</y>
+      <x>740</x>
+      <y>310</y>
+      <width>261</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid gray;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="winProc6">
+    <property name="geometry">
+     <rect>
+      <x>1020</x>
+      <y>310</y>
+      <width>261</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid gray;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="winProc7">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>590</y>
+      <width>261</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid gray;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="winProc8">
+    <property name="geometry">
+     <rect>
+      <x>750</x>
+      <y>590</y>
+      <width>261</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid gray;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="winProc9">
+    <property name="geometry">
+     <rect>
+      <x>1030</x>
+      <y>590</y>
       <width>261</width>
       <height>231</height>
      </rect>
@@ -302,8 +441,8 @@
    <widget class="QLabel" name="subtitle3">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>360</y>
+      <x>1030</x>
+      <y>10</y>
       <width>261</width>
       <height>17</height>
      </rect>
@@ -325,8 +464,8 @@
    <widget class="QLabel" name="subtitle2">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>80</y>
+      <x>750</x>
+      <y>10</y>
       <width>261</width>
       <height>17</height>
      </rect>
@@ -348,8 +487,31 @@
    <widget class="QLabel" name="subtitle1">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>80</y>
+      <x>460</x>
+      <y>10</y>
+      <width>261</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="subtitle4">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>290</y>
       <width>261</width>
       <height>17</height>
      </rect>
@@ -371,8 +533,100 @@
    <widget class="QLabel" name="subtitle5">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>360</y>
+      <x>740</x>
+      <y>290</y>
+      <width>261</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="subtitle6">
+    <property name="geometry">
+     <rect>
+      <x>1020</x>
+      <y>290</y>
+      <width>261</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="subtitle7">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>570</y>
+      <width>261</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="subtitle8">
+    <property name="geometry">
+     <rect>
+      <x>750</x>
+      <y>570</y>
+      <width>261</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="subtitle9">
+    <property name="geometry">
+     <rect>
+      <x>1030</x>
+      <y>570</y>
       <width>261</width>
       <height>17</height>
      </rect>
@@ -394,8 +648,8 @@
    <widget class="QLabel" name="mainTitle">
     <property name="geometry">
      <rect>
-      <x>880</x>
-      <y>50</y>
+      <x>1320</x>
+      <y>10</y>
       <width>261</width>
       <height>17</height>
      </rect>
@@ -414,11 +668,434 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_5">
+   <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>40</y>
+      <x>10</x>
+      <y>340</y>
+      <width>421</width>
+      <height>331</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Calibración</string>
+    </property>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>130</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>N° frames:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="calNumFrames">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>130</y>
+       <width>51</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>25</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="readOnly">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>290</y>
+       <width>51</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Salida:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="calOutputFile">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>290</y>
+       <width>141</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>output.xml</string>
+     </property>
+     <property name="readOnly">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="fixAspectRatio">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>162</y>
+       <width>141</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Fix Aspect Ratio</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="fixPrincipalPoint">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>187</y>
+       <width>141</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Fix Principal Point</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="zeroTangentDist">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>212</y>
+       <width>141</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Zero Tangent Dist</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="withUndistort">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>260</y>
+       <width>121</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Usar undistort</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="saveCamParams">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>240</y>
+       <width>151</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Guardar parámetros</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="calibOpts">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>151</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Tipo calibración</string>
+     </property>
+     <widget class="QRadioButton" name="rbCalibNone">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>121</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>No calibrar</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbCalibOpencv">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>121</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Calib. OpenCV</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="framesOpts">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>30</y>
+       <width>131</width>
+       <height>85</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Selección frames</string>
+     </property>
+     <widget class="QRadioButton" name="rbFrmManual">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>117</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Manual</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbFrmIntervals">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>117</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Por intervalos</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>820</y>
+      <width>271</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Distancia</string>
+    </property>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>67</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Archivo:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="fileDistance">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>68</x>
+       <y>60</y>
+       <width>161</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="withDistance">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>221</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Calcular distancia a cámara</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnLoadFileDist">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>228</x>
+       <y>60</y>
+       <width>21</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
       <width>231</width>
       <height>16</height>
      </rect>
@@ -440,11 +1117,11 @@
      <string>CALIBRATION OF CAMERA</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>60</y>
+      <x>10</x>
+      <y>40</y>
       <width>491</width>
       <height>31</height>
      </rect>
@@ -466,14 +1143,19 @@
      <string>COMPUTER SCIENCIE UNIVERSITY CATOLICA SAN PABLO</string>
     </property>
    </widget>
-   <widget class="QGroupBox" name="groupBox_2">
+   <widget class="QGroupBox" name="groupBox_4">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>380</y>
-      <width>231</width>
-      <height>231</height>
+      <x>220</x>
+      <y>129</y>
+      <width>221</width>
+      <height>201</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="title">
      <string> Time Accuracy</string>
@@ -481,7 +1163,7 @@
     <widget class="QLineEdit" name="leTFrames">
      <property name="geometry">
       <rect>
-       <x>122</x>
+       <x>120</x>
        <y>30</y>
        <width>91</width>
        <height>23</height>
@@ -494,10 +1176,10 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel" name="label_9">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>30</y>
        <width>101</width>
        <height>21</height>
@@ -513,11 +1195,11 @@
       <string>Total frames :</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="label_10">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>60</y>
+       <y>50</y>
        <width>91</width>
        <height>20</height>
       </rect>
@@ -536,9 +1218,9 @@
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>60</y>
+       <y>53</y>
        <width>91</width>
-       <height>23</height>
+       <height>20</height>
       </rect>
      </property>
      <property name="alignment">
@@ -552,7 +1234,7 @@
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>180</y>
+       <y>130</y>
        <width>91</width>
        <height>21</height>
       </rect>
@@ -571,11 +1253,11 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QLabel" name="label_7">
+    <widget class="QLabel" name="label_11">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>90</y>
+       <x>20</x>
+       <y>70</y>
        <width>91</width>
        <height>20</height>
       </rect>
@@ -590,11 +1272,11 @@
       <string>time/frame :</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_8">
+    <widget class="QLabel" name="label_12">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>180</y>
+       <y>120</y>
        <width>91</width>
        <height>31</height>
       </rect>
@@ -614,7 +1296,7 @@
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>140</y>
+       <y>100</y>
        <width>91</width>
        <height>23</height>
       </rect>
@@ -626,11 +1308,11 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QLabel" name="label_9">
+    <widget class="QLabel" name="label_13">
      <property name="geometry">
       <rect>
        <x>18</x>
-       <y>140</y>
+       <y>100</y>
        <width>81</width>
        <height>20</height>
       </rect>
@@ -649,9 +1331,9 @@
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>90</y>
+       <y>74</y>
        <width>91</width>
-       <height>25</height>
+       <height>21</height>
       </rect>
      </property>
     </widget>
@@ -662,7 +1344,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1510</width>
+     <width>1683</width>
      <height>22</height>
     </rect>
    </property>

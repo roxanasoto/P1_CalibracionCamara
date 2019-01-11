@@ -236,7 +236,7 @@ vector<Point2f> PatternDetector::cleanNoiseCenters(vector<Point2f> vCenters, vec
     if(vCenters.size() <= (numCols * numRows + maxError)) {
         // Ordenamiento de los radios en orden descendente para contar las frecuencias por intervalo
         if(vRadius.size()<=2)
-            return vCenters;
+                    return vCenters;
         sort(vRadius.rbegin(), vRadius.rend());
         radioOptimo = (vRadius[0].first + vRadius[vRadius.size()-1].first) * 0.5;
         return vCenters;
@@ -369,6 +369,7 @@ vector<Point2f> PatternDetector::findROI_rings(Mat image, Mat &imgOut)
     for(size_t i = 0; i < keypoints.size(); i++) {
         circle(imgOut, keypoints[i], 3, Scalar(255,255,0), -1);
     }
+    cout<<"salde del for"<<endl;
     return keypoints;
 }
 
@@ -485,6 +486,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
                 //line(drawImage0, Point(Points[i].first,Points[i].second),Point(Points[idx].first,Points[idx].second) ,Scalar(0, 0, 255));
 
             }
+            //imwrite("/home/roxana/PatronCircular/cercanos/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage0);
 
             //Hallamos las frecuencias de las distancias mas cercanas
             map<double,int> mapa2;
@@ -542,7 +544,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
 
             //imshow("Distancia minimo uno vs todos", drawImage1);
             visualizer->visualizeImage(PROC5, ImageHelper::convertMatToQimage(drawImage1), "Distancia minima uno vs todos");
-            //imwrite("/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/UCT/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage1);
+            //imwrite("/home/roxana/PatronCircular/UCT/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage1);
 
             // FILTRO RECORRIDO DFS
             // Hallando el grafo con mayor numero de nodos
@@ -580,6 +582,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
 
             visualizer->visualizeImage(PROC6, ImageHelper::convertMatToQimage(drawImage2), "Recorrido DFS");
 
+            //imwrite("/home//Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/DFS/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage2);
 
             // Sacamos los que tiene los costos minimos de entre las aristas que pertenecen al grafo
             sort(distancias2.begin(),distancias2.end());
@@ -605,7 +608,9 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
                 circle(tmp, P2, 4, Scalar(255, 0, 255), -1);
                 line(drawImage,P1,P2,Scalar(0, 0, 255));
             }
-
+        // Escribiendo los frames del resultado
+        //string str3 = "/home/roxana/PatronCircular/MST/Frames_" + num2str<int>(numeroGlobal) + ".png";
+        //imwrite(str3, drawImage);
         numeroGlobal++;
 
         visualizer->visualizeImage(PROC7, ImageHelper::convertMatToQimage(drawImage), "Aristas minimas");
@@ -649,7 +654,6 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
 
         // TRACKING GRID BOLITAS
         if((int)patternActual.size() <= maximobolitas){
-            //obtener el centro de mi conjunto
             Point2f centroide = trackGrid->getCentroide(patternActual);
             circle(frameDraw, Point(centroide.x, centroide.y), 4, MY_COLOR_GREEN, -1);
 
@@ -676,7 +680,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
                     line(frameDraw,Point(centroide.x,centroide.y), Point((*matForPre)[i].at<float>(0),(*matForPre)[i].at<float>(1)),MY_COLOR_WHITE,1,8,0);
                 }
             }
-//            visualizer->visualizeImage(PROC8, ImageHelper::convertMatToQimage(frameDraw), "Filtro Kalman eliminar ruido");*/
+            visualizer->visualizeImage(PROC8, ImageHelper::convertMatToQimage(frameDraw), "Filtro Kalman eliminar ruido");
         }
 
         if((int)patternActual.size() <= maximobolitas){
@@ -694,9 +698,10 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
 vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoints, Mat &imgOut)
 {
     int maximobolitas = numRows * numCols;
-
     patternActual.clear();
     cout<<"=>"<<(int)keypoints.size()<<endl;
+
+
     if((int)keypoints.size() <= maximobolitas){
         patternActual = keypoints;
     }else {
@@ -722,6 +727,7 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
         vector<pair<pair<float,float>, pair<int,int> > > extraInfo;
         int posMode, modeVal;
         stats::getFrequences<float,pair<int,int> >(distances, freqs, extraInfo, false, 4);
+        //stats::getFrequences<float,pair<int,int> >(distances, freqs, extraInfo, false, 5);
         stats::getMode(freqs, modeVal, posMode);
         cout << "MODE: " << freqs[posMode].second << endl;
 
@@ -762,8 +768,7 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
         circle(imgOut, Point2f(posX,posY),4,MY_COLOR_YELLOW,-1);
         patternActual.push_back(Point2f(posX,posY));
     }
-
-     cout<<"-> "<<(int)patternActual.size()<<endl;
+    cout<<"-> "<<(int)patternActual.size()<<endl;
     // TRACKING GRID ANILLOS
     if((int)patternActual.size() <= maximobolitas){
         Point2f centroide = trackGrid->getCentroide(patternActual);
@@ -794,7 +799,6 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
             }
         }
     }
-
     if((int)patternActual.size() <= maximobolitas){
         patternBefore = patternActual;
     }
@@ -880,11 +884,11 @@ bool PatternDetector::processingRingsPattern(std::vector<Point2f> &keypoints)
     cout << "findROI_rings " << endl;
     keypoints = findROI_rings(tmp.clone(), tmp);
     visualizer->visualizeImage(PROC3, ImageHelper::convertMatToQimage(tmp.clone()), "ROI");
-    // limpiar y obtener los puntos finales
-    //cout<<"keypoint size: "<<keypoints.size()<<endl;
+    // Obtención de los centros finales
     cout << "cleanNoiseUsingDistances " << endl;
     keypoints = cleanNoiseUsingDistances(keypoints, tmp);
-    visualizer->visualizeImage(PROC5, ImageHelper::convertMatToQimage(tmp), "Reduccion de ruido con distancias y KF");
+    visualizer->visualizeImage(PROC4, ImageHelper::convertMatToQimage(tmp), "Reduccion de ruido con distancias y KF");
+    // Si no se tiene completo el patron, se descarta el frame
     cout << "trackingPoints Rings" << endl;
     bool trackCorrect = trackingRingsPoints(keypoints);
     cout << "trancking correct" ;
@@ -952,7 +956,7 @@ bool PatternDetector::trackingCirclePoints(vector<Point2f> &keypoints) {
 
     // ESCOGEMOS LA PRIMERA Y ULTIMA COLUMNA DEL PATRON EN BASE A LA DISTANCIA
     vectorDis = trackGrid->sortByDistWithPoint(vectorDis);
-    if(vectorDis.size() != 5){
+    if(vectorDis.size() != 6){
         return false;
     }else{
         for(int i = 0; i < (int)posCornes.size(); i++){
@@ -1184,7 +1188,6 @@ bool PatternDetector::trackingCirclePoints(vector<Point2f> &keypoints) {
     drawZigZagPattern(keypoints,vecCol,img,2,flag);
     return true;
 }
-
 #define PI 3.14159265
 RotatedRect RectanguloR;
 int indice= 1;
@@ -1238,10 +1241,11 @@ vector<Point2f> ordenar(vector<Point2f> centros, int col, int fil)
 }
 
 bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
-    //ordenar
-    //keypoints.resize(20);
-    int countKeypoints = numCols*numRows;
 
+    //ordenar
+//    keypoints.resize(20);
+    //keypoints = ordenar(keypoints);
+    int countKeypoints = numCols*numRows;
     if(keypoints.size()!=countKeypoints)
         return false;
     keypoints = ordenar(keypoints,numCols,numRows);
@@ -1264,159 +1268,156 @@ bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
                 cv::line(img, keypoints[i - 1], keypoints[i], MY_COLOR_GREEN);
               }
         }
-    else{
+        else{
         //continue;
         return false;
         }
 
-    //}
     //dibujar
     imshow("RESULTADO FINAL", img);
 
     visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(img), "Resultado Final");
 
      return true;
+/*
+    if(keypoints.size() != numCols * numRows) {
+        return false;
+    }
 
-//    if(keypoints.size() != numCols * numRows) {
-//        return false;
-//    }
+    // Declaracion de vectores de colores
+    vector<Scalar> colors;
+    colors.push_back(MY_COLOR_RED);
+    colors.push_back(MY_COLOR_BLUE);
+    colors.push_back(MY_COLOR_YELLOW);
+    colors.push_back(MY_COLOR_GREEN);
+    colors.push_back(MY_COLOR_ORANGE);
+    colors.push_back(MY_COLOR_WHITE);
 
-//    // Declaracion de vectores de colores
-//    vector<Scalar> colors;
-//    colors.push_back(MY_COLOR_RED);
-//    colors.push_back(MY_COLOR_BLUE);
-//    colors.push_back(MY_COLOR_YELLOW);
-//    colors.push_back(MY_COLOR_GREEN);
-//    colors.push_back(MY_COLOR_ORANGE);
-//    colors.push_back(MY_COLOR_WHITE);
+    // En esta parte se empieza a utilizar el convexhull para hallar los segmentos de arriba y abajo
+    if(keypoints.size() > 0) {
 
-//    // En esta parte se empieza a utilizar el convexhull para hallar los segmentos de arriba y abajo
-//    if(keypoints.size() > 0) {
+        Mat imgCH = img.clone();
+        vector<vector<Point2f> > keys;
+        keys.push_back(keypoints);
+        vector<vector<Point2f> > hull(1);
+        convexHull(Mat(keypoints), hull[0], false);
 
-//        Mat imgCH = img.clone();
-//        vector<vector<Point2f> > keys;
-//        keys.push_back(keypoints);
-//        vector<vector<Point2f> > hull(1);
-//        convexHull(Mat(keypoints), hull[0], false);
+        //Obteniendo las esquinas del convexhull en el patron
+        vector<int> posCornes = trackGrid->getPosCornes(hull);
 
-//        //Obteniendo las esquinas del convexhull en el patron
-//        vector<int> posCornes = trackGrid->getPosCornes(hull);
+        // escribiendo esquinas del convexhull que son puntos consecutivos de un cuadrilatero
+        for(int i = 0; i < (int)posCornes.size(); i++){
+            circle(imgCH, hull[0][posCornes[i]], 10, colors[i], CV_FILLED,8,0);
+        }
+        visualizer->visualizeImage(PROC5, ImageHelper::convertMatToQimage(imgCH), "Convex Hull");
 
-//        // escribiendo esquinas del convexhull que son puntos consecutivos de un cuadrilatero
-//        for(int i = 0; i < (int)posCornes.size(); i++){
-//            circle(imgCH, hull[0][posCornes[i]], 10, colors[i], CV_FILLED,8,0);
-//        }
-//        visualizer->visualizeImage(PROC5, ImageHelper::convertMatToQimage(imgCH), "Convex Hull");
+        vector<pair<Point2f,Point2f> > extremosUpDown;
+        // Hallando extremos, arriba y abajo
+        for(int i = 0; i < (int)posCornes.size(); i++){
+            extremosUpDown.push_back(make_pair(hull[0][posCornes[i]],hull[0][posCornes[(i+1) % 4]]));
+        }
 
-//        vector<pair<Point2f,Point2f> > extremosUpDown;
-//        // Hallando extremos, arriba y abajo
-//        for(int i = 0; i < (int)posCornes.size(); i++){
-//            extremosUpDown.push_back(make_pair(hull[0][posCornes[i]],hull[0][posCornes[(i+1) % 4]]));
-//        }
+        // Hallando una recta con 6 puntos en su contenido extremosUpDown
+        vector<vector<pair<float,float> > > ans;
+        for(int i=0;i<(int)extremosUpDown.size();i++){
+            Point2f A = extremosUpDown[i].first;
+            Point2f B = extremosUpDown[i].second;
+            Point2f P;
+            // Interseccion de la recta AB con el punto P
+            vector<pair<float,float> > aux;
+            for(int k=0;k<(int)keypoints.size();k++){
 
-//        // Hallando una recta con 6 puntos en su contenido extremosUpDown
-//        vector<vector<pair<float,float> > > ans;
-//        for(int i=0;i<(int)extremosUpDown.size();i++){
-//            Point2f A = extremosUpDown[i].first;
-//            Point2f B = extremosUpDown[i].second;
-//            Point2f P;
-//            // Interseccion de la recta AB con el punto P
-//            vector<pair<float,float> > aux;
-//            for(int k=0;k<(int)keypoints.size();k++){
+                // Vemos que no sean los mismo puntos para evitar overflow
+                if( (keypoints[k].x == A.x && keypoints[k].y == A.y ) || (keypoints[k].x == B.x && keypoints[k].y == B.y )) continue;
+                P = keypoints[k];
+                // Hallando la distancia del punto P a la recta AB
+                double numerador = (P.x-A.x) * (B.y-A.y) - (P.y-A.y) * (B.x-A.x);
+                double denominador = sqrt((B.x - A.x)*(B.x - A.x) + (B.y - A.y)*(B.y - A.y));
+                double distancia = numerador / denominador;
+                if(abs((int)distancia) < 6){ // se escoge 6 como tolerancia de precision
+                    aux.push_back(make_pair(keypoints[k].x,keypoints[k].y));
+                }
+            }
+            aux.push_back(make_pair(A.x,A.y));
+            aux.push_back(make_pair(B.x,B.y));
 
-//                // Vemos que no sean los mismo puntos para evitar overflow
-//                if( (keypoints[k].x == A.x && keypoints[k].y == A.y ) || (keypoints[k].x == B.x && keypoints[k].y == B.y )) continue;
-//                P = keypoints[k];
-//                // Hallando la distancia del punto P a la recta AB
-//                double numerador = (P.x-A.x) * (B.y-A.y) - (P.y-A.y) * (B.x-A.x);
-//                double denominador = sqrt((B.x - A.x)*(B.x - A.x) + (B.y - A.y)*(B.y - A.y));
-//                double distancia = numerador / denominador;
-//                if(abs((int)distancia) < 6){ // se escoge 6 como tolerancia de precision
-//                    aux.push_back(make_pair(keypoints[k].x,keypoints[k].y));
-//                }
-//            }
-//            aux.push_back(make_pair(A.x,A.y));
-//            aux.push_back(make_pair(B.x,B.y));
+            if((int)aux.size()==4){
+                //Ordenando Ascendentemente x, descendentemente y
+                sort(aux.begin(),aux.end(),cmp);
+                ans.push_back(aux);
+            }
+        }
 
-//            if((int)aux.size()==4){
-//                //Ordenando Ascendentemente x, descendentemente y
-//                sort(aux.begin(),aux.end(),cmp);
-//                ans.push_back(aux);
-//            }
-//        }
+        vector<pair<float,float> > SortPoints;
+        stack<vector<pair<float,float> > > pila;
+        // escribir lineas de colores
+        if(ans.size()>1){
 
-//        vector<pair<float,float> > SortPoints;
-//        stack<vector<pair<float,float> > > pila;
-//        // escribir lineas de colores
-//        if(ans.size()>1){
+            Point2f PPP = Point2f(ans[0][0].first,ans[0][0].second);
+            for(int j=0;j<min((int)ans[0].size(),(int)ans[1].size());j++){
+                // Escribiendo los puntos extremos y el segmento entre ellos
+                circle(img, Point2f(ans[0][j].first,ans[0][j].second), 5, colors[j%colors.size()], CV_FILLED,8,0);
+                circle(img, Point2f(ans[1][j].first,ans[1][j].second), 5, colors[j%colors.size()], CV_FILLED,8,0);
+                line(img,Point2f(ans[0][j].first,ans[0][j].second),Point2f(ans[1][j].first,ans[1][j].second),colors[j%colors.size()]);
 
-//            Point2f PPP = Point2f(ans[0][0].first,ans[0][0].second);
-//            for(int j=0;j<min((int)ans[0].size(),(int)ans[1].size());j++){
-//                // Escribiendo los puntos extremos y el segmento entre ellos
-//                circle(img, Point2f(ans[0][j].first,ans[0][j].second), 5, colors[j%colors.size()], CV_FILLED,8,0);
-//                circle(img, Point2f(ans[1][j].first,ans[1][j].second), 5, colors[j%colors.size()], CV_FILLED,8,0);
-//                line(img,Point2f(ans[0][j].first,ans[0][j].second),Point2f(ans[1][j].first,ans[1][j].second),colors[j%colors.size()]);
+                SortPoints.push_back(make_pair(ans[0][j].first,ans[0][j].second));
+                SortPoints.push_back(make_pair(ans[1][j].first,ans[1][j].second));
 
-//                SortPoints.push_back(make_pair(ans[0][j].first,ans[0][j].second));
-//                SortPoints.push_back(make_pair(ans[1][j].first,ans[1][j].second));
+                vector<pair<float,Point2f> > distanciaRecta; // Distancia a la recta AB del punto P
+                // Hallando los puntos de la recta AB
+                Point2f A =  Point2f(ans[0][j].first,ans[0][j].second);
+                Point2f B =  Point2f(ans[1][j].first,ans[1][j].second);
+                Point2f P;
+                // Keypoints tiene todos los puntos del patron
+                for(int k=0;k<(int)keypoints.size();k++){
+                    //Vemos que no sean los mismo puntos para evitar overflow
+                    if( (keypoints[k].x == A.x && keypoints[k].y == A.y ) || (keypoints[k].x == B.x && keypoints[k].y == B.y )) continue;
+                    P = keypoints[k];
+                    // Hallando la distancia del punto P a la recta AB
+                    double numerador = (P.x-A.x) * (B.y-A.y) - (P.y-A.y) * (B.x-A.x);
+                    double denominador = sqrt((B.x - A.x)*(B.x - A.x) + (B.y - A.y)*(B.y - A.y));
+                    double distancia = numerador / denominador;
+                    distanciaRecta.push_back(make_pair(abs((float)distancia),P));
+                }
 
-//                vector<pair<float,Point2f> > distanciaRecta; // Distancia a la recta AB del punto P
-//                // Hallando los puntos de la recta AB
-//                Point2f A =  Point2f(ans[0][j].first,ans[0][j].second);
-//                Point2f B =  Point2f(ans[1][j].first,ans[1][j].second);
-//                Point2f P;
-//                // Keypoints tiene todos los puntos del patron
-//                for(int k=0;k<(int)keypoints.size();k++){
-//                    //Vemos que no sean los mismo puntos para evitar overflow
-//                    if( (keypoints[k].x == A.x && keypoints[k].y == A.y ) || (keypoints[k].x == B.x && keypoints[k].y == B.y )) continue;
-//                    P = keypoints[k];
-//                    // Hallando la distancia del punto P a la recta AB
-//                    double numerador = (P.x-A.x) * (B.y-A.y) - (P.y-A.y) * (B.x-A.x);
-//                    double denominador = sqrt((B.x - A.x)*(B.x - A.x) + (B.y - A.y)*(B.y - A.y));
-//                    double distancia = numerador / denominador;
-//                    distanciaRecta.push_back(make_pair(abs((float)distancia),P));
-//                }
+                // Ordenamos las distancias, para escoger los 3 mas cercanos
+                sort(distanciaRecta.begin(),distanciaRecta.end(),cmp2);
+                for(int i=0;i<3;i++){
+                    SortPoints.push_back(make_pair(distanciaRecta[i].second.x,distanciaRecta[i].second.y));
+                    circle(img, distanciaRecta[i].second, 5, colors[j%colors.size()], CV_FILLED,8,0);
+                }
 
-//                // Ordenamos las distancias, para escoger los 3 mas cercanos
-//                sort(distanciaRecta.begin(),distanciaRecta.end(),cmp2);
-//                for(int i=0;i<3;i++){
-//                    SortPoints.push_back(make_pair(distanciaRecta[i].second.x,distanciaRecta[i].second.y));
-//                    circle(img, distanciaRecta[i].second, 5, colors[j%colors.size()], CV_FILLED,8,0);
-//                }
+                circle(img, Point(ans[1][j].first,ans[1][j].second), 10, CV_RGB(0,0,0), CV_FILLED,8,0);
+                sort(SortPoints.rbegin(),SortPoints.rend(),cmp3);
+                // Almacenando los puntos de una recta
+                pila.push(SortPoints);
+                SortPoints.clear();
 
-//                circle(img, Point(ans[1][j].first,ans[1][j].second), 10, CV_RGB(0,0,0), CV_FILLED,8,0);
-//                sort(SortPoints.rbegin(),SortPoints.rend(),cmp3);
-//                // Almacenando los puntos de una recta
-//                pila.push(SortPoints);
-//                SortPoints.clear();
+                // Escribiendo linea para la siguiente columna del patron
+                line(img,Point2f(ans[0][j].first,ans[0][j].second),PPP,colors[(j-1+colors.size())%colors.size()]);
+                PPP = Point2f(ans[1][j].first,ans[1][j].second);
+            }
 
-//                // Escribiendo linea para la siguiente columna del patron
-//                line(img,Point2f(ans[0][j].first,ans[0][j].second),PPP,colors[(j-1+colors.size())%colors.size()]);
-//                PPP = Point2f(ans[1][j].first,ans[1][j].second);
-//            }
-
-//            // Escribiendo las rectas de manera descendente
-//            int counter = 0;  // Contador para etiquetar los puntos
-//            keypoints.clear();
-//            // Extraendo los elementos de la pila
-//            while(!pila.empty()){
-//                // Escribiendo numeros
-//                for(int i=0;i<pila.top().size();i++){
-//                    stringstream sstr;
-//                    sstr<<counter;
-//                    counter++;
-//                    cv::putText(img,sstr.str(),Point2f(pila.top()[i].first,pila.top()[i].second),cv::FONT_HERSHEY_SIMPLEX,0.5,CV_RGB(255,255,255),2);
-//                    keypoints.push_back(Point2f(pila.top()[i].first,pila.top()[i].second));
-//                }
-//                pila.pop();
-//            }
-//        }
-//        imshow("RESULTADO FINAL", img);
-//    }
-
-//    visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(img), "Resultado Final");
-
-//    return true;
+            // Escribiendo las rectas de manera descendente
+            int counter = 0;  // Contador para etiquetar los puntos
+            keypoints.clear();
+            // Extraendo los elementos de la pila
+            while(!pila.empty()){
+                // Escribiendo numeros
+                for(int i=0;i<pila.top().size();i++){
+                    stringstream sstr;
+                    sstr<<counter;
+                    counter++;
+                    cv::putText(img,sstr.str(),Point2f(pila.top()[i].first,pila.top()[i].second),cv::FONT_HERSHEY_SIMPLEX,0.5,CV_RGB(255,255,255),2);
+                    keypoints.push_back(Point2f(pila.top()[i].first,pila.top()[i].second));
+                }
+                pila.pop();
+            }
+        }
+        imshow("RESULTADO FINAL", img);
+    }
+    visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(img), "Resultado Final");
+    return true;*/
 }
 
 void PatternDetector::sortPoints(vector<StruSegme> vectSeg,vector<Point2f> &keyPoints, int flag){

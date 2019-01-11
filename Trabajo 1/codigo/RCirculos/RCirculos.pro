@@ -14,20 +14,20 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
+    KFTracking.cpp \
     trackingGrid.cpp \
     patterndetector.cpp \
-    cameracalibrator.cpp \
-    kftracking.cpp
+    cameracalibrator.cpp
 
 HEADERS  += mainwindow.h \
     image.h \
+    KFTracking.h \
     trackingGrid.h \
     constantParams.h \
     Geometria.h \
     Statistics.h \
     patterndetector.h \
-    cameracalibrator.h \
-    kftracking.h
+    cameracalibrator.h
 
 FORMS    += mainwindow.ui
 

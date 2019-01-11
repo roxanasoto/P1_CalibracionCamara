@@ -26,6 +26,7 @@ public:
     void visualizetimeReal(double tframe);
     void visualizaframesReal(int sumFrame);
 
+
 private slots:
     void on_btnLoadVideo_clicked();
     void on_btnInitProc_clicked();
@@ -33,6 +34,21 @@ private slots:
     void on_rbRing_clicked();
     void closeEvent(QCloseEvent *event);
 
+    void on_withDistance_toggled(bool checked);
+
+    void on_btnLoadFileDist_clicked();
+
+    void on_rbCalibNone_clicked();
+
+    void on_rbCalibOpencv_clicked();
+
+    void on_rbCalibAnkur_clicked();
+
+    void on_rbFrmManual_clicked();
+
+    void on_rbFrmIntervals_clicked();
+
+    void on_rbFrmRansac_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -41,7 +57,7 @@ private:
     unsigned int currCalibrator;
     unsigned int currFrameSelector;
 
-    //void activateCalibrationParams(bool status);
+    void activateCalibrationParams(bool status);
 };
 
 #endif // MAINWINDOW_H

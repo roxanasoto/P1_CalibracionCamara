@@ -38,7 +38,6 @@ private:
     unsigned int numRows;
     MainWindow *visualizer;
 
-
     KFTracking* kfTracking;
     TrackingGrid* trackGrid;
     double dtKFTrac;
