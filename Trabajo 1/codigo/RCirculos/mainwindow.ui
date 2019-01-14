@@ -892,7 +892,7 @@
        <x>10</x>
        <y>30</y>
        <width>151</width>
-       <height>81</height>
+       <height>91</height>
       </rect>
      </property>
      <property name="title">
@@ -935,6 +935,19 @@
       </property>
       <property name="text">
        <string>Calib. OpenCV</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbCalibAnkur">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>112</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Calib. Ankur</string>
       </property>
      </widget>
     </widget>
@@ -990,8 +1003,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>820</y>
+      <x>30</x>
+      <y>730</y>
       <width>271</width>
       <height>101</height>
      </rect>

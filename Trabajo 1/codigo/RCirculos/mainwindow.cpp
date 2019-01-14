@@ -180,7 +180,7 @@ void MainWindow::on_rbRing_clicked()
     pattSelected = PATT_RING;
     ui->numRows->setText("4");
     ui->numCols->setText("5");
-    ui->centersDistance->setText("45");//RING
+    ui->centersDistance->setText("30");
     //ui->centersDistance->setText("25.5");
 }
 // TIME & ACCURACY
@@ -246,13 +246,24 @@ void MainWindow::on_rbCalibOpencv_clicked()
     ui->withDistance->setChecked(false);
 }
 
+void MainWindow::on_rbCalibAnkur_clicked()
+{
+    currCalibrator = CALIB_ANKUR;
+    activateCalibrationParams(true);
+    ui->withDistance->setChecked(false);
+}
+
 void MainWindow::on_rbFrmManual_clicked()
 {
     currFrameSelector = FRAMESEL_MANUAL;
 }
 
+void MainWindow::on_rbFrmIntervals_clicked()
+{
+    currFrameSelector = FRAMESEL_INTERVAL;
+}
 
-/*void MainWindow::on_rbFrmRansac_clicked()
+void MainWindow::on_rbFrmRansac_clicked()
 {
     currFrameSelector = FRAMESEL_RANSAC;
-}*/
+}

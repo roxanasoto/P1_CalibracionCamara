@@ -486,7 +486,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
                 //line(drawImage0, Point(Points[i].first,Points[i].second),Point(Points[idx].first,Points[idx].second) ,Scalar(0, 0, 255));
 
             }
-            //imwrite("/home/roxana/PatronCircular/cercanos/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage0);
+            //imwrite("/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/cercanos/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage0);
 
             //Hallamos las frecuencias de las distancias mas cercanas
             map<double,int> mapa2;
@@ -544,7 +544,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
 
             //imshow("Distancia minimo uno vs todos", drawImage1);
             visualizer->visualizeImage(PROC5, ImageHelper::convertMatToQimage(drawImage1), "Distancia minima uno vs todos");
-            //imwrite("/home/roxana/PatronCircular/UCT/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage1);
+            //imwrite("/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/UCT/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage1);
 
             // FILTRO RECORRIDO DFS
             // Hallando el grafo con mayor numero de nodos
@@ -582,7 +582,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
 
             visualizer->visualizeImage(PROC6, ImageHelper::convertMatToQimage(drawImage2), "Recorrido DFS");
 
-            //imwrite("/home//Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/DFS/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage2);
+            //imwrite("/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/DFS/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage2);
 
             // Sacamos los que tiene los costos minimos de entre las aristas que pertenecen al grafo
             sort(distancias2.begin(),distancias2.end());
@@ -609,7 +609,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
                 line(drawImage,P1,P2,Scalar(0, 0, 255));
             }
         // Escribiendo los frames del resultado
-        //string str3 = "/home/roxana/PatronCircular/MST/Frames_" + num2str<int>(numeroGlobal) + ".png";
+        //string str3 = "/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/MST/Frames_" + num2str<int>(numeroGlobal) + ".png";
         //imwrite(str3, drawImage);
         numeroGlobal++;
 

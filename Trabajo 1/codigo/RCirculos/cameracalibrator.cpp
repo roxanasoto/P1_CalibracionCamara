@@ -13,7 +13,9 @@
 #define realMP __minpack_real__
 
 #define INTERVAL_INC    7
-
+#define OFFSET_ANKUR    30
+#define TOL_ANKUR       0.0001
+#define MAX_INTER_ANKUR 20
 
 
 #define INF (1<<30)
@@ -233,7 +235,7 @@ void CameraCalibrator::selectFrames(map<uint, vector<Point2f> > mapFrames, vecto
 
                 // A05
                 int myFrames5[84] = {1,8,16,23,31,38,46,61,76,91,106,113,121,128,136,143,151,158,166,173,181,188,196,203,211,226,318,333,357,363,370,378,393,398,433,440,448,463,470,478,485,493,500,508,515,523,530,538,569,584,599,629,644,659,674,689,704,719,764,779,869,884,929,959,974,989,1049,1064,1169,1184,1259,1274,1289,1319,1349,1364,1394,1409,1424,1439,1484,1514,1529,1544};
-                framesVideos.push_back(vector<int>(myFrames5,myFrames5+84));
+                //framesVideos.push_back(vector<int>(myFrames5,myFrames5+84));
 
             } else {
                 cout << "Entro al Manual Circulos" << endl;
@@ -300,7 +302,13 @@ void CameraCalibrator::selectFrames(map<uint, vector<Point2f> > mapFrames, vecto
             }
             break;
         }
-
+        case FRAMESEL_RANSAC:
+        {
+            // Elegir frames con Ransac
+            // void CameraCalibrator::RANSAC(Size imageSize,vector<vector<Point2f> > frames,double RMS,vector<int> framesId)
+            //RANSAC();
+            break;
+        }
     }
     // Entregamos los centros elegidos y los frames seleccionados
     int currFrame = 0;
@@ -323,7 +331,7 @@ void CameraCalibrator::selectFrames(map<uint, vector<Point2f> > mapFrames, vecto
             //bitwise_not(img,tmp);
             //imshow("FrameToCalibration", tmp);
             // Guardando el frame utilizado para la calibracion
-            //imwrite("/home/roxana/PatronCircular/frame_elegidos_1_" + num2str<int>(idx) + ".png", img);
+            //imwrite("/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/frame_elegidos_1_" + num2str<int>(idx) + ".png", img);
             idx++;
         }
     }
@@ -507,6 +515,96 @@ void fcnWithMoreFcnSinTrRot(const int* m, const int* n, const realMP* x, realMP*
 
 }
 
+double CameraCalibrator::paramsOptimizationAnkurLMSinRotTrasWithLessFNC(vector<vector<Point2f> > centers2D,
+                                                           vector<vector<Point3f> > centers3D,
+                                         Mat &cameraMatrix, Mat &distCoeffs, vector<Mat> rvecs, vector<Mat> tvecs) {
+              cout << " tTrasWithLessFNC " << endl;
+
+              int nFrames  = centers2D.size();
+              int m = nFrames;
+              int n = 4 + // parametros intrinsecos o camaraMatrix (fx,fy,cx,cy)
+                      5; // coeficientes de distorsión (k1,k2,p1,p2,k3)
+              int one = 1, info;
+              int lwa = m*n + 5*n + m + 10;
+              int* iwa = new int[n];
+
+              realMP ftol, fnorm;
+              realMP* x = new realMP[n];
+              realMP* fvec = new realMP[m];
+              realMP* wa = new realMP[lwa];
+
+              xAnte = new realMP[n];
+              xAnteOri = new realMP[n];
+
+              cout << " tamanio de m " << m << endl;
+              cout << " tamanio de n " << n << endl;
+
+              // pasando los valores de fx, fy, cx, cy al x;
+              x[0] = cameraMatrix.at<double>(0,0);
+              x[1] = cameraMatrix.at<double>(0,2);
+              x[2] = cameraMatrix.at<double>(1,1);
+              x[3] = cameraMatrix.at<double>(1,2);
+
+              // pasando los valores de coeficientes de distorsion al x
+              x[4] = distCoeffs.at<double>(0);
+              x[5] = distCoeffs.at<double>(1);
+              x[6] = distCoeffs.at<double>(2);
+              x[7] = distCoeffs.at<double>(3);
+              x[8] = distCoeffs.at<double>(4);
+
+              for(int i = 0; i < n; i++){
+                  xAnte[i] = x[i];
+                  xAnteOri[i] = x[i];
+              }
+
+              // vector de traslación y rotación, matriz de camara y coeficientes de distorsion
+              genParamCameraMatrix = cameraMatrix.clone();
+              genDistorsioMatrix = distCoeffs.clone();
+              vecGenRot = rvecs;
+              vecGenTras = tvecs;
+              genCenters2D = centers2D;
+              genCenters3D = centers3D;
+
+              // copiando valores antes de la modificacion de variables hecha por Levenberg Marquardt
+              cantVeces = 1;
+              ftol = sqrt(__minpack_func__(dpmpar)(&one));              
+              __minpack_func__(lmdif1)(&fcnWithMoreFcnSinTrRot, &m, &n, x, fvec, &ftol, &info, iwa, wa, &lwa);
+              fnorm = __minpack_func__(enorm)(&m, fvec);
+
+              int tempCant = 0;
+              for(int i = 0; i < n; i++)
+                  if(abs(xAnteOri[i] - x[i]) >= 0.0001)
+                      tempCant++;
+
+              cout << " valor de la tolerancia ===> " << ftol << endl;
+              //    cout << "LevenbergMarquart sin Rotacion&Traslacion cantidadIteraciones " << cantVeces << endl;
+              //    cout << "LevenbergMarquart sin Rotacion&Traslacion cantidadCambios en todo el metodo " << cantActualizaciones << endl;
+              //    cout << "LevenbergMarquart sin Rotacion&Traslacion cantidaVariables que cambiaron " << tempCant << endl;
+
+//              cantVeces = 1;
+//              cantActualizaciones = 0;
+
+              // guardando el resultado despues de la optimización
+              cameraMatrix = genParamCameraMatrix.clone();
+              distCoeffs = genDistorsioMatrix.clone();
+
+              // OBTIENEDO LOS RMS DE ESTA FUNCIÓN
+              double rmsLM = 0.0;
+//              int nPoints = numCols * numRows;
+//              for(int iFrame = 0; iFrame < nFrames; iFrame++){
+//                  // proyectamos los puntos 3d(reales) a puntos 2d usando parametros intrisicos y coeficientes de distorsion
+//                  vector<Point2f> project3D2D;
+//                  projectPoints(genCenters3D[iFrame], vecGenRot[iFrame], vecGenTras[iFrame], cameraMatrix, distCoef, project3D2D);
+//                  double err = norm(Mat(genCenters2D[iFrame]),Mat(project3D2D),NORM_L2);
+//                  fvec[iFrame] = (err*err)/nPoints;
+//              }
+
+              cout << " valor de la tolerancia " << ftol << endl;
+              printf("      FINAL L2 NORM OF THE RESIDUALS%15.7f\n\n",fnorm);
+              printf("      EXIT PARAMETER                %10i\n\n", info);
+
+              return rmsLM;
+}
 
 double computeReprojectionErrors(const vector<vector<Point3f> >& objectPoints, const vector<vector<Point2f> >& imagePoints,
     const vector<Mat>& rvecs, const vector<Mat>& tvecs,
@@ -533,6 +631,199 @@ double computeReprojectionErrors(const vector<vector<Point3f> >& objectPoints, c
     return std::sqrt(totalErr / totalPoints);
 }
 
+///
+/// \brief CameraCalibrator::runAnkurCalibrationSinRotTras realiza la calibracion usando el método propuesto en el paper de Ankur
+/// \param imageSize        Tamaño de la imagen
+/// \param imagePoints      Vector que contiene los centros 2D de los frames seleccionados para la calibracion
+/// \param objectsPoints    Vector que contiene los centros 3D de los centros del patron en el mundo
+/// \param frames           Frames seleccionados para realizar la calibracion
+/// \param cameraMatrix     Matriz donde se almacenara la matriz de camara obtenida en el proceso de calibracion
+/// \param distCoeffs       Vector que almacenara los coeficientes de distorsion encontrados
+/// \param rvecs            Vector que almacenara el vector de rotacion encontrado
+/// \param tvecs            Vector que almacenara el vector de traslacion encontrado
+/// \return     valor del RMS obtenido
+///
+double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<vector<Point2f> > imagePoints, vector<vector<Point3f> > objectsPoints, vector<Mat> frames, Mat &cameraMatrix, Mat &distCoeffs, vector<Mat> &rvecs, vector<Mat> &tvecs)
+{
+    Size templateSize;
+    // Generando las posiciones del template
+    vector<Point2f> dstPoints;
+    float dist = OFFSET_ANKUR;//30
+    cout<<"NumColums"<<numCols<<endl;
+    templateSize.width = dist * (numCols + 1);
+    switch (pattDetector->getCurrentPattern()) {
+        case PATT_CIRCLE:
+            templateSize.height = dist * (2 * numRows + 1);
+            for (uint j = numCols; j > 0; j--)
+                for (size_t i = 1; i <= numRows; i++)
+                    dstPoints.push_back(Point2f(j * dist, (2 * i - 1 + (j-1) % 2) * dist));
+            break;
+        case PATT_RING:
+            templateSize.height = dist * (numRows + 1);
+            for (uint j = numCols; j > 0; j--)
+                for (size_t i = 1; i <= numRows; i++)
+                    dstPoints.push_back(Point2f(j * dist, i * dist));
+            break;
+    }
+
+    vector<double> vRms;
+    // Calculo de los parametros iniciales para Ankur
+    int numIterations = 0;
+    double rmsIni, newRms1=0, newRms2, minRms;
+
+    rmsIni = runOpenCVCalibration(imageSize, imagePoints, objectsPoints, cameraMatrix, distCoeffs, rvecs, tvecs);
+    minRms = rmsIni;
+    newRms2 = rmsIni;
+    vRms.push_back(rmsIni);
+
+    // Variables que almacenaran los parametros del RMS menor
+    Mat minCameraMatrix = cameraMatrix.clone(),
+        minDistCoeffs = distCoeffs.clone();
+    vector<Mat> minRvecs = rvecs, minTvecs = tvecs;
+
+    cout << "=====================\n";
+    cout << "RatioTemplate: " << templateSize << endl;
+    cout << "FramesCalibration: " << numFramesToCalibration << endl;
+    cout << "Frames Selected: " << frames.size() << endl;
+
+    iteracionesGen = 1;
+
+    //while(abs(newRms2 - newRms1) > TOL_ANKUR && numIterations < MAX_INTER_ANKUR) {
+    while(numIterations < MAX_INTER_ANKUR) {
+        newRms1 = newRms2;
+        numIterations++;
+
+        Mat imgFronPar, imgUnd, aux, H;
+        vector<vector<Point2f> > newCenters;
+        vector<Point2f> tmpCenters(numCols * numRows);
+        vector<Point2f> tmp1Centers(numCols * numRows);
+
+        bool status = false;
+        int cont = 0;
+
+        for(size_t i = 0; actived && i < frames.size(); i++) {
+            // Undistort el frame actual
+            undistort(frames[i], imgUnd, cameraMatrix, distCoeffs);
+            //imwrite(folderOutVideo + "_undistort_" + num2str<int>(i) + ".png", imgUnd);
+            imshow("Undistort", imgUnd);
+            // Hallando la matriz de homografia para corregir la perspectiva
+            H = findHomography(imagePoints[i], dstPoints, noArray(), CV_RANSAC);
+            // Generando la imagen fronto-paralela con la matriz H
+            warpPerspective(imgUnd, imgFronPar, H, templateSize);
+            //imwrite(folderOutVideo + "frontoparalelo_" + num2str<int>(i) + ".png", imgFronPar);
+            imshow("Homography transform", imgFronPar);
+            // Calculamos los centros del patron canonico (frontoparalelo)
+            pattDetector->setImage(imgFronPar.clone());
+            switch (pattDetector->getCurrentPattern()) {
+                case PATT_CIRCLE:
+                    status = pattDetector->processingCirclesPattern(tmp1Centers);
+                    break;
+                case PATT_RING:
+                    status = pattDetector->processingRingsPattern(tmp1Centers);
+                    break;
+            }
+            if(status && tmp1Centers.size() == numRows * numCols) {
+                cont++;
+            }
+            else {
+                cout << "InvalidFrame: i " << i+1 <<  endl;
+            }
+
+            visualizer->visualizeImage(PROC1, ImageHelper::convertMatToQimage(imgUnd), "Undistort");
+            visualizer->visualizeImage(PROC2, ImageHelper::convertMatToQimage(imgFronPar), "Fronto-parallel");
+            aux = imgFronPar.clone();
+            for(size_t i =0; i < tmp1Centers.size(); i++) {
+                circle(aux, tmp1Centers[i], 3, Scalar(255,255,0), -1);
+            }
+            visualizer->visualizeImage(PROC3, ImageHelper::convertMatToQimage(aux.clone()), "Centers fronto-parallel");
+
+            // Reproyeccion de los centros del frontoparalelo a la imagen sin distorsion
+            perspectiveTransform(tmp1Centers, tmpCenters, H.inv());
+            aux = imgUnd.clone();
+            for(size_t i =0; i < tmpCenters.size(); i++) {
+                circle(aux, tmpCenters[i], 3, Scalar(255,255,0), -1);
+            }
+            imshow("Reprojection", aux);
+            visualizer->visualizeImage(PROC4, ImageHelper::convertMatToQimage(aux.clone()), "Reprojection (no distortion)");
+            tmp1Centers = distort(tmpCenters,cameraMatrix,distCoeffs);
+            newCenters.push_back(tmp1Centers);
+
+            aux = frames[i].clone();
+            for(size_t j = 0; j < tmp1Centers.size(); j++){
+                circle(aux, imagePoints[i][j], 1, Scalar(255, 255, 255), -1); // Puntos de la imagen original (con distorsion)
+                circle(aux, tmp1Centers[j], 1, Scalar(255, 0, 255), -1);    // Centros reprojectados con distorsion
+            }
+            imshow("Distorsion", aux);
+            visualizer->visualizeImage(PROC5, ImageHelper::convertMatToQimage(aux.clone()), "Reprojection (distortion)");
+            visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(aux.clone()), "Comparing centers");
+            //imwrite(folderOutVideo + "_Ankur_" + num2str<int>(i) + "_iter_" + num2str<int>(numIterations) + ".png", aux);
+
+            waitKey(200);
+        }
+
+        vector<vector<Point2f> > newCentersGen;
+        vector<vector<Point3f> > objectsPointsGen;
+        vector<Mat> trasVecGen;
+        vector<Mat> rotVecGen;
+        for(int i = 0; i < (int)frames.size(); i++){
+            if((int)newCenters[i].size() == numCols * numRows){
+                newCentersGen.push_back(newCenters[i]);
+                objectsPointsGen.push_back(objectsPoints[i]);
+                trasVecGen.push_back(tvecs[i]);
+                rotVecGen.push_back(rvecs[i]);
+            }
+        }
+
+        // Levenberg - Marquardt
+        // obteniendo los frames adecuados:
+        cout << " # de iteracion " << numIterations << endl;
+        cout << "==== Antes de LM ====" << endl;
+        cout << " cameraMatrix = \n " << cameraMatrix << endl;
+        cout << " distorsion Coeff = \n  " << distCoeffs << endl;
+        cout << " RMS1: " << newRms1 << endl << endl;
+
+        // PARA VISUALIZAR LOS PUNTOS
+//        for(int j = 0; j < frames.size(); j++){
+//            Mat frameTemp = frames[0].clone();
+//            for(int i = 0; i < newCenters[0].size(); i++){
+//                circle(frameTemp, imagePoints[i][j], 5, Scalar(0,0,255), -1);
+//                circle(frameTemp, imagePoints[i][j], 5, Scalar(0,255,255), -1);
+//            }
+//        }
+
+        paramsOptimizationAnkurLMSinRotTrasWithLessFNC(newCentersGen, objectsPointsGen, cameraMatrix, distCoeffs, rotVecGen, trasVecGen);
+        vector<float> perViewErrors;
+        newRms2 = computeReprojectionErrors(objectsPointsGen, newCentersGen, rotVecGen, trasVecGen, cameraMatrix, distCoeffs, perViewErrors);
+
+//        newRms2 = paramsOptimizationAnkurLMSinRotTrasWithLessFNC(newCentersGen, objectsPointsGen, cameraMatrix, distCoeffs, rotVecGen, trasVecGen);
+
+        // Nuevamente calibracion con parametros optimizados
+        cout << "==== Despues de LM ====" << endl;
+        cout << " cameraMatrix = \n" << cameraMatrix << endl;
+        cout << " distorsion Coeff =\n" << distCoeffs << endl;
+        cout << " RMS2: " << newRms2 << endl << endl;
+
+        iteracionesGen++;
+
+        vRms.push_back(newRms2);
+        if(newRms2 < minRms) {
+            minRms = newRms2;
+            minCameraMatrix = cameraMatrix.clone();
+            minDistCoeffs = distCoeffs.clone();
+            minRvecs = rotVecGen;
+            minTvecs = trasVecGen;
+        }
+        cout << "FRAMES ENVIADOS: " << cont << " / " << numFramesToCalibration << endl;
+        cout << "\n% Analisis: " << (cont * 100.0 / numFramesToCalibration) << "\nDiffRMS: " << abs(newRms2 - newRms1) << endl << endl;
+    }
+    saveValuesToCSV<double>(folderOutVideo + "_RMSs.csv", vRms);
+
+    cout << "\n=====================\n";
+    cout << "ANKUR Method:\n -NumIterations: " << numIterations << "\n -Tolerance: " << TOL_ANKUR << "\n -OurRMS: " << rmsIni << "\n -MinRMS: " << minRms << endl;
+    cout << "=====================\n";
+    return minRms;
+}
+
 
 ///
 /// \brief CameraCalibrator::runCalibrationAndSave realiza la calibracion de la camara y guarda los datos en un archivo XML
@@ -552,6 +843,9 @@ double CameraCalibrator::runCalibrationAndSave(Size imageSize, vector<vector<Poi
     switch (currCalib) {
         case CALIB_OPENCV:
             rms = runOpenCVCalibration(imageSize, imagePoints, objectsPoints, cameraMatrix, distCoeffs, rvecs, tvecs);
+            break;
+        case CALIB_ANKUR:
+            rms = runAnkurCalibrationSinRotTras(imageSize, imagePoints, objectsPoints, frames, cameraMatrix, distCoeffs, rvecs, tvecs);
             break;
         default:
             return 0;
@@ -684,6 +978,142 @@ float CameraCalibrator::runComputeDistance(vector<Point2f> imagePoints, Mat came
     return distance;
 }
 
+void CameraCalibrator::RANSAC(Size imageSize,vector<vector<Point2f> > frames,double RMS,vector<int> framesId){
+    // Escogemos 100 frames distribuidos en todo el video
+    vector<vector<Point2f> > frames_aux;
+    vector<int> frames_auxId;
+    int m = 100; //numero de muestras que se van a escoger como poblacion
+    int interval = frames.size()/m;
+    //dbg(interval);
+    //dbg(frames.size());
+    //dbg(framesId.size());
+    for(int i=0;i<frames.size();i+=interval){
+        frames_aux.push_back(frames[i]);
+        frames_auxId.push_back(framesId[i]);
+    }
+
+    frames   = frames_aux;
+    framesId = frames_auxId;
+
+    cout << "Entro al algoritmo de Ransac con un RMS = " << RMS << endl;
+    vector<Mat> rvecs, tvecs;
+
+    int flag = 0;
+    if (calibFixPrincipalPoint) flag |= CALIB_FIX_PRINCIPAL_POINT;
+    if (calibZeroTangentDist)   flag |= CALIB_ZERO_TANGENT_DIST;
+    if (calibFixAspectRatio)    flag |= CALIB_FIX_ASPECT_RATIO;
+
+    // Empezando la calibracion, creamos una matriz 3x3 para los parametros intrinsecos de la camara
+    Mat cameraMatrix = Mat::eye(3, 3, CV_64F);
+    // Si tiene aspect ratio fijo
+    if(flag & CALIB_FIX_ASPECT_RATIO)
+        cameraMatrix.at<double>(0,0) = 1.0;
+    Mat distCoeffs = Mat::zeros(8, 1, CV_64F);
+
+    // Aqui empieza el algoritmo de RANSAC
+
+    int n=25;  //Numero de elementos que se toman como muestra
+    int k = 10; // Numero de iteraciones
+    int MOD = frames.size();
+    double t = RMS; // RMS inicial
+    int d = numFramesToCalibration;
+    int iterations = 0;
+
+    vector<vector<Point2f> > bestfit; // Mejor conjunto representativo, inicialmente vacio
+    vector<int> bestfitId;
+    double besterr = INF;
+    double bestSubSetRank = 1.0;
+    //dbg(frames.size());
+
+    while(iterations < k){
+        //dbg(iterations);
+        // Tenemos que escoger n frames aleatoriamente, escogemos los Id's
+        vector<int> ids; // arreglo de id seleccionados aleatoriamente
+        set<int> setp;
+        int nro;
+        while(ids.size()<n){
+            nro = rand()%MOD;
+            if(setp.find(nro)==setp.end()){ // Verificas que no esten repetidos
+                ids.push_back(nro);
+                setp.insert(nro);
+            }
+        }
+
+        // Sacamos el RMS del conjunto aleatorio
+        vector<vector<Point2f> > framesSeleccionados;
+        for(int i=0;i<n;i++){
+            framesSeleccionados.push_back(frames[ids[i]]);
+        }
+
+        vector<vector<Point3f> > objectsPoints(1);
+        objectsPoints[0] = calcDistanceInWorld();
+        objectsPoints.resize(framesSeleccionados.size(), objectsPoints[0]);
+        double RMS_iteracion =                                          (objectsPoints, framesSeleccionados, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs, flag);
+
+        // Si el RMS es alto buscamos otro subconjunto de n elementos con RMS mas bajo.
+        if(RMS_iteracion > bestSubSetRank) continue;
+        bestSubSetRank = RMS_iteracion+0.04;
+
+        vector<vector<Point2f> > alsoinliers;
+        vector<int> alsoinliersId;
+        // Confrontamos los puntos del modelo con el resto de puntos
+        for(int i=0;i<frames.size();i++){
+            if(setp.find(i)!=setp.end()) continue; // verificar que no estemos cogiendo puntos repetidos
+
+            vector<vector<Point2f> > framesPrueba = framesSeleccionados;
+            framesPrueba.push_back(frames[i]);
+
+            vector<vector<Point3f> > objectsPoints(1);
+            objectsPoints[0] = calcDistanceInWorld();
+            objectsPoints.resize(framesPrueba.size(), objectsPoints[0]);
+            double RMS_i = calibrateCamera(objectsPoints, framesPrueba, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs, flag);
+
+            dbg2(RMS_i,t);
+            if(RMS_i < t && RMS_i < RMS_iteracion){ // Este caso se acomoda bien al modelo y se hace la actualizacion de t
+                alsoinliers.push_back(frames[i]);
+                alsoinliersId.push_back(framesId[i]);
+            }
+        }
+
+        // Si el numero de elementos de alsoinliers es > d
+        //dbg(alsoinliers.size());
+        if(alsoinliers.size()>=d){
+            // Encontramos un buen modelo
+            vector<vector<Point2f> > bettermodel(alsoinliers.begin(),alsoinliers.end());
+            vector<int> bettermodelId(alsoinliersId.begin(),alsoinliersId.end());
+            for(int i=0;i<ids.size();i++){
+                bettermodel.push_back(frames[ids[i]]);
+                bettermodelId.push_back(framesId[ids[i]]);
+            }
+            dbg(bettermodel.size());
+
+            vector<vector<Point3f> > objectsPoints(1);
+            objectsPoints[0] = calcDistanceInWorld();
+            objectsPoints.resize(bettermodel.size(), objectsPoints[0]);
+            double thiserr = calibrateCamera(objectsPoints, bettermodel, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs, flag);
+            //dbg2(besterr,thiserr);
+            if(thiserr<besterr){
+                bestfit = bettermodel;
+                bestfitId = bettermodelId;
+                besterr = thiserr;
+            }
+            //dbg(bestfitId.size());
+            t = min(besterr,t); // Actualizamos al mejor RMS obtenido en la iteracion y el mejor hasta el momento
+        }
+        iterations++;
+    }
+    //dbg(besterr);
+    cout << "El mejor valor para RMS que se obtuvo es: " << besterr << endl;
+    dbg(bestfit.size());
+    // Aqui se muestran los elementos del conjunto
+    cout << "El conjunto de frames que tomamos esta compuesto por:" << endl;
+    //dbg(bestfitId.size());
+    sort(bestfitId.begin(),bestfitId.end());
+    for(int i=0;i<bestfitId.size();i++){
+       cout << bestfitId[i] << ", ";
+    }
+    cout << endl;
+}
 
 ///
 /// \brief CameraCalibrator::processingPattern realiza el procesamiento para la calibracion del patrón
@@ -754,8 +1184,8 @@ void CameraCalibrator::processingPattern()
     //cout << "=====================\n";
 
     if(actived) {
-        /*if(distanceActived)
-            saveValuesToCSV<float>(folderOutVideo + "_Distances.csv", distances);*/
+        if(distanceActived)
+            saveValuesToCSV<float>(folderOutVideo + "_Distances.csv", distances);
 
         // Evaluamos si se encuentra activada la opcion de calibracion de camara
         if(currCalib != CALIB_NONE) {
