@@ -215,11 +215,16 @@ void CameraCalibrator::selectFrames(map<uint, vector<Point2f> > mapFrames, vecto
                 cout << "Entro al Manual Anillos" << endl;
                 // El video es de Anillos
                 // A01
-                int myFrames1[] = {16,36,46,74,84,
+                int myFrames1[] = {44,56,75,77,81,
+                                                  117,120,128,188,256,
+                                                  266,288,297,308,402,
+                                                  439,480,587,599,608,
+                                                  656,664,691,730,762};
+                /*int myFrames1[] = {16,36,46,74,84,
                                   159,338,396,474,507,
                                   526,541,555,562,574,
                                   587,617,650,665,675,
-                                  709,773,808,824,850};
+                                  709,773,808,824,850};*/
                 framesVideos.push_back(vector<int>(myFrames1,myFrames1+25));
 
                 //A02 (falta cargar elementos)
@@ -305,7 +310,7 @@ void CameraCalibrator::selectFrames(map<uint, vector<Point2f> > mapFrames, vecto
         case FRAMESEL_RANSAC:
         {
             // Elegir frames con Ransac
-            // void CameraCalibrator::RANSAC(Size imageSize,vector<vector<Point2f> > frames,double RMS,vector<int> framesId)
+            void RANSAC(Size imageSize,vector<vector<Point2f> > frames,double RMS,vector<int> framesId);
             //RANSAC();
             break;
         }
@@ -331,7 +336,7 @@ void CameraCalibrator::selectFrames(map<uint, vector<Point2f> > mapFrames, vecto
             //bitwise_not(img,tmp);
             //imshow("FrameToCalibration", tmp);
             // Guardando el frame utilizado para la calibracion
-            //imwrite("/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/frame_elegidos_1_" + num2str<int>(idx) + ".png", img);
+            imwrite("/home/uburoxana/Documentos/Imagenes/PROYECTOFINAL_CALIBRACION/PatronCircular/build-RCirculos-Desktop-Debug/PatronCircular/frame_elegidos_1_" + num2str<int>(idx) + ".png", img);
             idx++;
         }
     }
@@ -515,7 +520,7 @@ void fcnWithMoreFcnSinTrRot(const int* m, const int* n, const realMP* x, realMP*
 
 }
 
-double CameraCalibrator::paramsOptimizationAnkurLMSinRotTrasWithLessFNC(vector<vector<Point2f> > centers2D,
+void CameraCalibrator::paramsOptimizationAnkurLMSinRotTrasWithLessFNC(vector<vector<Point2f> > centers2D,
                                                            vector<vector<Point3f> > centers3D,
                                          Mat &cameraMatrix, Mat &distCoeffs, vector<Mat> rvecs, vector<Mat> tvecs) {
               cout << " tTrasWithLessFNC " << endl;
@@ -590,6 +595,8 @@ double CameraCalibrator::paramsOptimizationAnkurLMSinRotTrasWithLessFNC(vector<v
 
               // OBTIENEDO LOS RMS DE ESTA FUNCIÓN
               double rmsLM = 0.0;
+              //rmsIni = runOpenCVCalibration(imageSize, imagePoints, objectsPoints, genParamCameraMatrix, genDistorsioMatrix, vecGenRot, vecGenTras);
+
 //              int nPoints = numCols * numRows;
 //              for(int iFrame = 0; iFrame < nFrames; iFrame++){
 //                  // proyectamos los puntos 3d(reales) a puntos 2d usando parametros intrisicos y coeficientes de distorsion
@@ -603,7 +610,7 @@ double CameraCalibrator::paramsOptimizationAnkurLMSinRotTrasWithLessFNC(vector<v
               printf("      FINAL L2 NORM OF THE RESIDUALS%15.7f\n\n",fnorm);
               printf("      EXIT PARAMETER                %10i\n\n", info);
 
-              return rmsLM;
+              //return rmsLM;
 }
 
 double computeReprojectionErrors(const vector<vector<Point3f> >& objectPoints, const vector<vector<Point2f> >& imagePoints,
@@ -618,8 +625,7 @@ double computeReprojectionErrors(const vector<vector<Point3f> >& objectPoints, c
 
     for (i = 0; i < (int)objectPoints.size(); ++i)
     {
-        projectPoints(Mat(objectPoints[i]), rvecs[i], tvecs[i], cameraMatrix,
-            distCoeffs, imagePoints2);
+        projectPoints(Mat(objectPoints[i]), rvecs[i], tvecs[i], cameraMatrix, distCoeffs, imagePoints2);
         err = norm(Mat(imagePoints[i]), Mat(imagePoints2), NORM_L2);
 
         int n = (int)objectPoints[i].size();
@@ -648,8 +654,7 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
     Size templateSize;
     // Generando las posiciones del template
     vector<Point2f> dstPoints;
-    float dist = OFFSET_ANKUR;//30
-    cout<<"NumColums"<<numCols<<endl;
+    float dist = 44;//OFFSET_ANKUR;
     templateSize.width = dist * (numCols + 1);
     switch (pattDetector->getCurrentPattern()) {
         case PATT_CIRCLE:
@@ -690,16 +695,32 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
 
     //while(abs(newRms2 - newRms1) > TOL_ANKUR && numIterations < MAX_INTER_ANKUR) {
     while(numIterations < MAX_INTER_ANKUR) {
-        newRms1 = newRms2;
+        //newRms1 = newRms2;
         numIterations++;
 
-        Mat imgFronPar, imgUnd, aux, H;
+        Mat imgFronPar, imgUnd, aux, H, Hi;
         vector<vector<Point2f> > newCenters;
         vector<Point2f> tmpCenters(numCols * numRows);
         vector<Point2f> tmp1Centers(numCols * numRows);
 
         bool status = false;
         int cont = 0;
+
+        //vector<vector<Point2f> > inputQuad2;
+        /*Point2f inputQuad[4];
+        Point2f outputQuad[4];
+        inputQuad.push_back(imagePoints[15]);
+        inputQuad.push_back(imagePoints[19]);
+        inputQuad.push_back(imagePoints[4]);
+        inputQuad.push_back(imagePoints[0]);
+        inputQuad[0] = imagePoints[15][0];
+        inputQuad[1] = imagePoints[19][0];
+        inputQuad[2] = imagePoints[4][0];
+        inputQuad[3] = imagePoints[0][0];
+        outputQuad[0] = Point2f( 55, 55 );
+        outputQuad[1] = Point2f( 555 - 1,55);
+        outputQuad[2] = Point2f( 555 - 1,430 - 1);
+        outputQuad[3] = Point2f( 55,430 - 1);*/
 
         for(size_t i = 0; actived && i < frames.size(); i++) {
             // Undistort el frame actual
@@ -708,11 +729,16 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
             imshow("Undistort", imgUnd);
             // Hallando la matriz de homografia para corregir la perspectiva
             H = findHomography(imagePoints[i], dstPoints, noArray(), CV_RANSAC);
+            Hi = findHomography(dstPoints,imagePoints[i], noArray(),CV_RANSAC);
+            //H = getPerspectiveTransform( inputQuad, outputQuad );
             // Generando la imagen fronto-paralela con la matriz H
-            warpPerspective(imgUnd, imgFronPar, H, templateSize);
-            //imwrite(folderOutVideo + "frontoparalelo_" + num2str<int>(i) + ".png", imgFronPar);
+            //warpPerspective(imgUnd, imgFronPar, H, templateSize);
+            warpPerspective(imgUnd, imgFronPar, H, imgFronPar.size());
+
+            //H = getPerspectiveTransform( outputQuad, inputQuad );
+            imwrite(folderOutVideo +"/"+ folderOutVideo + "_frontoparalelo_" + num2str<int>(i) + ".png", imgFronPar);
             imshow("Homography transform", imgFronPar);
-            // Calculamos los centros del patron canonico (frontoparalelo)
+            // Calculamos los centros del patron canonico (frontoparalelo) ? Puntos de control??
             pattDetector->setImage(imgFronPar.clone());
             switch (pattDetector->getCurrentPattern()) {
                 case PATT_CIRCLE:
@@ -720,31 +746,35 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
                     break;
                 case PATT_RING:
                     status = pattDetector->processingRingsPattern(tmp1Centers);
+                    cout<<"status"<<status<<endl;
                     break;
             }
-            if(status && tmp1Centers.size() == numRows * numCols) {
+            if(status  && tmp1Centers.size() == numRows * numCols) {
                 cont++;
             }
             else {
                 cout << "InvalidFrame: i " << i+1 <<  endl;
             }
 
-            visualizer->visualizeImage(PROC1, ImageHelper::convertMatToQimage(imgUnd), "Undistort");
-            visualizer->visualizeImage(PROC2, ImageHelper::convertMatToQimage(imgFronPar), "Fronto-parallel");
+            visualizer->visualizeImage(PROC5, ImageHelper::convertMatToQimage(imgUnd), "Undistort");
+            visualizer->visualizeImage(PROC6, ImageHelper::convertMatToQimage(imgFronPar), "Fronto-parallel");
             aux = imgFronPar.clone();
+            // Dibujar circulos de color
             for(size_t i =0; i < tmp1Centers.size(); i++) {
                 circle(aux, tmp1Centers[i], 3, Scalar(255,255,0), -1);
             }
-            visualizer->visualizeImage(PROC3, ImageHelper::convertMatToQimage(aux.clone()), "Centers fronto-parallel");
+            visualizer->visualizeImage(PROC7, ImageHelper::convertMatToQimage(aux.clone()), "Centers fronto-parallel");
 
             // Reproyeccion de los centros del frontoparalelo a la imagen sin distorsion
-            perspectiveTransform(tmp1Centers, tmpCenters, H.inv());
+            //perspectiveTransform(tmp1Centers, tmpCenters, H.inv());
+            perspectiveTransform(tmp1Centers, tmpCenters, Hi);
+
             aux = imgUnd.clone();
             for(size_t i =0; i < tmpCenters.size(); i++) {
                 circle(aux, tmpCenters[i], 3, Scalar(255,255,0), -1);
             }
             imshow("Reprojection", aux);
-            visualizer->visualizeImage(PROC4, ImageHelper::convertMatToQimage(aux.clone()), "Reprojection (no distortion)");
+            visualizer->visualizeImage(PROC8, ImageHelper::convertMatToQimage(aux.clone()), "Reprojection (no distortion)");
             tmp1Centers = distort(tmpCenters,cameraMatrix,distCoeffs);
             newCenters.push_back(tmp1Centers);
 
@@ -754,11 +784,13 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
                 circle(aux, tmp1Centers[j], 1, Scalar(255, 0, 255), -1);    // Centros reprojectados con distorsion
             }
             imshow("Distorsion", aux);
-            visualizer->visualizeImage(PROC5, ImageHelper::convertMatToQimage(aux.clone()), "Reprojection (distortion)");
+            visualizer->visualizeImage(PROC9, ImageHelper::convertMatToQimage(aux.clone()), "Reprojection (distortion)");
             visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(aux.clone()), "Comparing centers");
             //imwrite(folderOutVideo + "_Ankur_" + num2str<int>(i) + "_iter_" + num2str<int>(numIterations) + ".png", aux);
 
             waitKey(200);
+
+
         }
 
         vector<vector<Point2f> > newCentersGen;
@@ -773,14 +805,24 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
                 rotVecGen.push_back(rvecs[i]);
             }
         }
+        //Obteniendo el RMS inicial
+        cout << " RMS1: " << rmsIni  << endl;
+        //Obteneindo los nuevos RMS
+        double newRms1 = calibrateCamera(objectsPointsGen, newCentersGen, imageSize, cameraMatrix, distCoeffs, rotVecGen, trasVecGen, 0);
+        cout << " cameraMatrix = \n " << cameraMatrix << endl;
+        cout << " distorsion Coeff = \n  " << distCoeffs << endl;
+        cout << " newRMS1: " << newRms1 << endl;
+        vRms.push_back(newRms1);
+
+        //newRms1 = calibrate_camera(objectsPoints, cameraMatrix, distCoeffs, imagePoints);
 
         // Levenberg - Marquardt
         // obteniendo los frames adecuados:
-        cout << " # de iteracion " << numIterations << endl;
+        /*cout << " # de iteracion " << numIterations << endl;
         cout << "==== Antes de LM ====" << endl;
         cout << " cameraMatrix = \n " << cameraMatrix << endl;
         cout << " distorsion Coeff = \n  " << distCoeffs << endl;
-        cout << " RMS1: " << newRms1 << endl << endl;
+        cout << " newRMS1: " << newRms1 << endl;*/
 
         // PARA VISUALIZAR LOS PUNTOS
 //        for(int j = 0; j < frames.size(); j++){
@@ -791,37 +833,38 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
 //            }
 //        }
 
-        paramsOptimizationAnkurLMSinRotTrasWithLessFNC(newCentersGen, objectsPointsGen, cameraMatrix, distCoeffs, rotVecGen, trasVecGen);
-        vector<float> perViewErrors;
-        newRms2 = computeReprojectionErrors(objectsPointsGen, newCentersGen, rotVecGen, trasVecGen, cameraMatrix, distCoeffs, perViewErrors);
+//        paramsOptimizationAnkurLMSinRotTrasWithLessFNC(newCentersGen, objectsPointsGen, cameraMatrix, distCoeffs, rotVecGen, trasVecGen);
+        //vector<float> perViewErrors;
+        //newRms2 = computeReprojectionErrors(objectsPointsGen, newCentersGen, rotVecGen, trasVecGen, cameraMatrix, distCoeffs, perViewErrors);
 
-//        newRms2 = paramsOptimizationAnkurLMSinRotTrasWithLessFNC(newCentersGen, objectsPointsGen, cameraMatrix, distCoeffs, rotVecGen, trasVecGen);
+        //newRms2 = paramsOptimizationAnkurLMSinRotTrasWithLessFNC(newCentersGen, objectsPointsGen, cameraMatrix, distCoeffs, rotVecGen, trasVecGen);
 
         // Nuevamente calibracion con parametros optimizados
-        cout << "==== Despues de LM ====" << endl;
+        /*cout << "==== Despues de LM ====" << endl;
         cout << " cameraMatrix = \n" << cameraMatrix << endl;
         cout << " distorsion Coeff =\n" << distCoeffs << endl;
-        cout << " RMS2: " << newRms2 << endl << endl;
+        cout << " RMS2: " << newRms2 << endl << endl;*/
 
-        iteracionesGen++;
+        //iteracionesGen++;
 
-        vRms.push_back(newRms2);
-        if(newRms2 < minRms) {
+        //vRms.push_back(newRms2);
+
+        /*if(newRms2 < minRms) {
             minRms = newRms2;
             minCameraMatrix = cameraMatrix.clone();
             minDistCoeffs = distCoeffs.clone();
             minRvecs = rotVecGen;
             minTvecs = trasVecGen;
-        }
-        cout << "FRAMES ENVIADOS: " << cont << " / " << numFramesToCalibration << endl;
-        cout << "\n% Analisis: " << (cont * 100.0 / numFramesToCalibration) << "\nDiffRMS: " << abs(newRms2 - newRms1) << endl << endl;
+        }*/
+        //cout << "FRAMES ENVIADOS: " << cont << " / " << numFramesToCalibration << endl;
+       // cout << "\n% Analisis: " << (cont * 100.0 / numFramesToCalibration) << "\nDiffRMS: " << abs(newRms2 - newRms1) << endl << endl;
     }
-    saveValuesToCSV<double>(folderOutVideo + "_RMSs.csv", vRms);
+    saveValuesToCSV<double>(folderOutVideo + "/"+folderOutVideo + "_RMSs.csv", vRms);
 
-    cout << "\n=====================\n";
+    /*cout << "\n=====================\n";
     cout << "ANKUR Method:\n -NumIterations: " << numIterations << "\n -Tolerance: " << TOL_ANKUR << "\n -OurRMS: " << rmsIni << "\n -MinRMS: " << minRms << endl;
-    cout << "=====================\n";
-    return minRms;
+    cout << "=====================\n";*/
+    return newRms1;
 }
 
 
@@ -839,7 +882,7 @@ double CameraCalibrator::runCalibrationAndSave(Size imageSize, vector<vector<Poi
     vector<vector<Point3f> > objectsPoints(1);
     objectsPoints[0] = calcDistanceInWorld();
     objectsPoints.resize(imagePoints.size(), objectsPoints[0]);
-    cout<<"folderOutVideo"<<folderOutVideo<<endl;
+
     switch (currCalib) {
         case CALIB_OPENCV:
             rms = runOpenCVCalibration(imageSize, imagePoints, objectsPoints, cameraMatrix, distCoeffs, rvecs, tvecs);
@@ -1129,7 +1172,7 @@ void CameraCalibrator::processingPattern()
     map<uint, vector<Point2f> > mapFrames;
     vector<float> distances;
 
-    while (true && actived) {
+    while (actived) {
         // Lectura de cada frame
         video >> img;
         if (!img.data)
@@ -1159,7 +1202,7 @@ void CameraCalibrator::processingPattern()
             framesAnalyzed++;
             visualizer->visualizaframesReal(framesAnalyzed);
             mapFrames[framesTotal] = keypoints;
-            //imwrite(folderOutVideo + "/frame_" + num2str<int>(framesTotal) + ".png", tmp);
+            imwrite(folderOutVideo + "/frame_" + num2str<int>(framesTotal) + ".png", tmp);
         }
         else {
             //imwrite(folderOutVideo + "/frame_" + num2str<int>(framesTotal) + "_mal.png", tmp);
@@ -1175,13 +1218,13 @@ void CameraCalibrator::processingPattern()
     }
 
     cout << "=====================\n";
-    cout<<"TM get counter"<<tm.getCounter();
+    cout<<"TM get counter"<<tm.getCounter()<<endl;
     double average_time = tm.getTimeMilli() / tm.getCounter();
     //cout << "Total Frames: " << framesTotal << "\nFrames Analizados: " << framesAnalyzed << "\n% Analisis: " << (framesAnalyzed * 1.0 / framesTotal) << endl;
     cout << "Total Frames: " << framesTotal << "\nFrames Analizados: " << framesAnalyzed << "\n% Analisis: " << (framesAnalyzed * 1.0 / framesTotal) << "\n AVG: "<<average_time<< endl;
     // Mostrar el analisis de Tiempo y Frames
     visualizer->visualizeTimeExec(framesTotal,framesAnalyzed ,(framesAnalyzed * 1.0 / framesTotal), average_time);
-    //cout << "=====================\n";
+    cout << "=====================\n";
 
     if(actived) {
         if(distanceActived)
@@ -1189,7 +1232,6 @@ void CameraCalibrator::processingPattern()
 
         // Evaluamos si se encuentra activada la opcion de calibracion de camara
         if(currCalib != CALIB_NONE) {
-            cout<<"folderOutVideo"<<folderOutVideo<<endl;
             vector<Mat> frames;
             vector<vector<Point2f> > centers;
             Size imageSize;
@@ -1213,9 +1255,9 @@ void CameraCalibrator::processingPattern()
                     undistort(img, tmp, paramCameraMatrix, paramDistCoeffs);
                     imshow("After calibration", tmp);
                     visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(tmp), "UNDISTORT IMAGE");
-                    string path = "/home/uburoxana/Documentos/Imagenes/Manuel_Loayza/PROYECTO_1/PatronCircular/build-RCirculos-Desktop_Qt_5_12_0_GCC_64bit-Debug/PadronAnillos_03/Opencv/";
+                    string path = "/home/uburoxana/Documentos/Imagenes/PROYECTOFINAL_CALIBRACION/PatronCircular/build-RCirculos-Desktop-Debug/PadronAnillos_01/Opencv/";
 
-                    //imwrite(folderOutVideo + "/frame_" + num2str<int>(framesTotal) + "orifpng", tmp);
+                    imwrite(folderOutVideo + "/frame_" + num2str<int>(framesTotal) + "orifpng", tmp);
                     imwrite(path + num2str<int>(id++) + ".png", tmp);
                     if (waitKey(20) >= 0)
                         break;

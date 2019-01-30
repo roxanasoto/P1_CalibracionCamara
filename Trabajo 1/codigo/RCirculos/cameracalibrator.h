@@ -61,7 +61,7 @@ private:
     double runAnkurCalibrationSinRotTras(Size imageSize, vector<vector<Point2f> > imagePoints, vector<vector<Point3f> > objectsPoints, vector<Mat> frames, Mat &cameraMatrix, Mat &distCoeffs, vector<Mat> &rvecs, vector<Mat> &tvecs);
     double runCalibrationAndSave(Size imageSize, vector<vector<Point2f> > imagePoints, vector<Mat> frames, Mat &cameraMatrix, Mat &distCoeffs);
     void saveCameraParameters(Size &imageSize, Mat &cameraMatrix, Mat &distCoeffs, vector<Mat> &rvecs, vector<Mat> &tvecs, vector<vector<Point2f> > imagePoints, double rms);
-    double paramsOptimizationAnkurLMSinRotTrasWithLessFNC(vector<vector<Point2f> >, vector<vector<Point3f> >,Mat&,Mat&,vector<Mat>,vector<Mat>);
+    void paramsOptimizationAnkurLMSinRotTrasWithLessFNC(vector<vector<Point2f> >, vector<vector<Point3f> >,Mat&,Mat&,vector<Mat>,vector<Mat>);
     bool readCameraParameters(string path);
     float runComputeDistance(vector<Point2f> imagePoints, Mat cameraMatrix, Mat distCoeffs);
     void RANSAC(Size imageSize,vector<vector<Point2f> > frames,double RMS,vector<int> framesId);

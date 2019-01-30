@@ -15,7 +15,7 @@
 #define T       0.15f
 
 // Parametros de contornos
-#define MIN_SIZE_CONTOUR    6
+#define MIN_SIZE_CONTOUR    5
 #define MYEPS 1e-8
 
 // Operaciones
@@ -369,7 +369,6 @@ vector<Point2f> PatternDetector::findROI_rings(Mat image, Mat &imgOut)
     for(size_t i = 0; i < keypoints.size(); i++) {
         circle(imgOut, keypoints[i], 3, Scalar(255,255,0), -1);
     }
-    cout<<"salde del for"<<endl;
     return keypoints;
 }
 
@@ -486,7 +485,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
                 //line(drawImage0, Point(Points[i].first,Points[i].second),Point(Points[idx].first,Points[idx].second) ,Scalar(0, 0, 255));
 
             }
-            //imwrite("/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/cercanos/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage0);
+            //imwrite("/home/uburoxana/Documentos/Imagenes/PROYECTOFINAL_CALIBRACION/PatronCircular/build-RCirculos-Desktop-Debug/PatronCircular/cercanos/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage0);
 
             //Hallamos las frecuencias de las distancias mas cercanas
             map<double,int> mapa2;
@@ -544,7 +543,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
 
             //imshow("Distancia minimo uno vs todos", drawImage1);
             visualizer->visualizeImage(PROC5, ImageHelper::convertMatToQimage(drawImage1), "Distancia minima uno vs todos");
-            //imwrite("/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/UCT/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage1);
+            //imwrite("/home/uburoxana/Documentos/Imagenes/PROYECTOFINAL_CALIBRACION/PatronCircular/build-RCirculos-Desktop-Debug/PatronCircular_01/UCT/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage1);
 
             // FILTRO RECORRIDO DFS
             // Hallando el grafo con mayor numero de nodos
@@ -582,7 +581,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
 
             visualizer->visualizeImage(PROC6, ImageHelper::convertMatToQimage(drawImage2), "Recorrido DFS");
 
-            //imwrite("/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/DFS/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage2);
+            //imwrite("/home/uburoxana/Documentos/Imagenes/PROYECTOFINAL_CALIBRACION/PatronCircular/build-RCirculos-Desktop-Debug/PatronCircular_01/DFS/Frames_" + num2str<int>(numeroGlobal) + ".png", drawImage2);
 
             // Sacamos los que tiene los costos minimos de entre las aristas que pertenecen al grafo
             sort(distancias2.begin(),distancias2.end());
@@ -609,7 +608,7 @@ vector<Point2f> PatternDetector::findFinalCenters_circles(vector<Point2f> keypoi
                 line(drawImage,P1,P2,Scalar(0, 0, 255));
             }
         // Escribiendo los frames del resultado
-        //string str3 = "/home/gerar/Documentos/Vision Computacional/mcs_imagenes_camaracalibration/PatronCircular/MST/Frames_" + num2str<int>(numeroGlobal) + ".png";
+        //string str3 = "/home/uburoxana/Documentos/Imagenes/PROYECTOFINAL_CALIBRACION/PatronCircular/build-RCirculos-Desktop-Debug/PatronCircular_01/MST/Frames_" + num2str<int>(numeroGlobal) + ".png";
         //imwrite(str3, drawImage);
         numeroGlobal++;
 
@@ -699,13 +698,10 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
 {
     int maximobolitas = numRows * numCols;
     patternActual.clear();
-    cout<<"=>"<<(int)keypoints.size()<<endl;
-
 
     if((int)keypoints.size() <= maximobolitas){
         patternActual = keypoints;
     }else {
-        cout<<"keypoints size: "<<(int)keypoints.size()<<endl;
         int factDist = 2;
         // Calculamos las distancias de uno vs todos
         vector<pair<float, pair<int,int> > > distances;
@@ -726,8 +722,8 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
         vector<pair<int, float> > freqs;
         vector<pair<pair<float,float>, pair<int,int> > > extraInfo;
         int posMode, modeVal;
-        stats::getFrequences<float,pair<int,int> >(distances, freqs, extraInfo, false, 4);
-        //stats::getFrequences<float,pair<int,int> >(distances, freqs, extraInfo, false, 5);
+        //stats::getFrequences<float,pair<int,int> >(distances, freqs, extraInfo, false, 4);
+        stats::getFrequences<float,pair<int,int> >(distances, freqs, extraInfo, false, 5);
         stats::getMode(freqs, modeVal, posMode);
         cout << "MODE: " << freqs[posMode].second << endl;
 
@@ -768,7 +764,7 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
         circle(imgOut, Point2f(posX,posY),4,MY_COLOR_YELLOW,-1);
         patternActual.push_back(Point2f(posX,posY));
     }
-    cout<<"-> "<<(int)patternActual.size()<<endl;
+
     // TRACKING GRID ANILLOS
     if((int)patternActual.size() <= maximobolitas){
         Point2f centroide = trackGrid->getCentroide(patternActual);
@@ -783,7 +779,6 @@ vector<Point2f> PatternDetector::cleanNoiseUsingDistances(vector<Point2f> keypoi
         arrayMat->push_back(tempKF);
 
         //primera vez que aparece el patron
-        cout<<"FIRST FOUND: "<<kfTracking->firstFound[0]<<endl;
         if(kfTracking->firstFound[0]){
             kfTracking->setStateInit(arrayMat);
             kfTracking->firstFound[0] = false;
@@ -891,7 +886,7 @@ bool PatternDetector::processingRingsPattern(std::vector<Point2f> &keypoints)
     // Si no se tiene completo el patron, se descarta el frame
     cout << "trackingPoints Rings" << endl;
     bool trackCorrect = trackingRingsPoints(keypoints);
-    cout << "trancking correct" ;
+    cout << "trancking correct"<<endl ;
     return trackCorrect;
 }
 
@@ -1246,8 +1241,10 @@ bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
 //    keypoints.resize(20);
     //keypoints = ordenar(keypoints);
     int countKeypoints = numCols*numRows;
-    if(keypoints.size()!=countKeypoints)
+    if(keypoints.size()!=countKeypoints)// && keypoints.size()<= countKeypoints
         return false;
+    else{
+
     keypoints = ordenar(keypoints,numCols,numRows);
 
    // while(countKeypoints){
@@ -1279,6 +1276,7 @@ bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
     visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(img), "Resultado Final");
 
      return true;
+    }
 /*
     if(keypoints.size() != numCols * numRows) {
         return false;
@@ -1334,14 +1332,14 @@ bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
                 double numerador = (P.x-A.x) * (B.y-A.y) - (P.y-A.y) * (B.x-A.x);
                 double denominador = sqrt((B.x - A.x)*(B.x - A.x) + (B.y - A.y)*(B.y - A.y));
                 double distancia = numerador / denominador;
-                if(abs((int)distancia) < 6){ // se escoge 6 como tolerancia de precision
+                if(abs((int)distancia) <5){ // se escoge 6 como tolerancia de precision//roxana
                     aux.push_back(make_pair(keypoints[k].x,keypoints[k].y));
                 }
             }
             aux.push_back(make_pair(A.x,A.y));
             aux.push_back(make_pair(B.x,B.y));
 
-            if((int)aux.size()==4){
+            if((int)aux.size()==5){//roxana
                 //Ordenando Ascendentemente x, descendentemente y
                 sort(aux.begin(),aux.end(),cmp);
                 ans.push_back(aux);

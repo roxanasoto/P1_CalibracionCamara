@@ -180,8 +180,10 @@ void MainWindow::on_rbRing_clicked()
     pattSelected = PATT_RING;
     ui->numRows->setText("4");
     ui->numCols->setText("5");
-    ui->centersDistance->setText("30");
-    //ui->centersDistance->setText("25.5");
+    ui->centersDistance->setText("44");
+    /*ui->numRows->setText("5");
+    ui->numCols->setText("6");
+    ui->centersDistance->setText("25.5");*/
 }
 // TIME & ACCURACY
 void MainWindow::visualizeTimeExec(int totalFrames, int framesAna, double accu ,double timeValue){
