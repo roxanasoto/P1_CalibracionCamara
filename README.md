@@ -2,9 +2,13 @@
 Curso de Imagenes 
 Estudiantes:
 - Roxana Soto
-- Wilderd
+- Wilderd Mamani
 
-En este repositorio se presentan dos trabajos con respecto al curso de Imagenes  
+En este repositorio se presentan dos trabajos con respecto al curso de Imagenes (Calibracion de Camara)
+## Dependencias y Ejecucion
+- Qt creator (desarrollo visual windows)
+- opencv2 (calibracion y funciones utils)
+- mimpack (libreria levergentquack...)
 ## Trabajo 1
 Proyecto de Calibracion de Camara usando videos en tiempo real  
 ### Codigos
