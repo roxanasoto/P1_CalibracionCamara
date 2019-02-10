@@ -636,7 +636,44 @@ double computeReprojectionErrors(const vector<vector<Point3f> >& objectPoints, c
 
     return std::sqrt(totalErr / totalPoints);
 }
+///new
+void create_real_pattern(int h, int w, vector<Point3f>& out_real_centers){
 
+    float margin_h = 70;//50
+    float margin_w = 90;
+    float distance_points = 110;
+    out_real_centers.clear();
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*0) ,float( margin_h), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*1) ,float( margin_h), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*2) ,float( margin_h), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*3) ,float( margin_h), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*4) ,float( margin_h), 0));
+
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*0) ,float( margin_h+distance_points*1), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*1) ,float( margin_h+distance_points*1), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*2) ,float( margin_h+distance_points*1), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*3) ,float( margin_h+distance_points*1), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*4) ,float( margin_h+distance_points*1), 0));
+
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*0) ,float( margin_h+distance_points*2), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*1) ,float( margin_h+distance_points*2), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*2) ,float( margin_h+distance_points*2), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*3) ,float( margin_h+distance_points*2), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*4) ,float( margin_h+distance_points*2), 0));
+
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*0) ,float( margin_h+distance_points*3), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*1) ,float( margin_h+distance_points*3), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*2) ,float( margin_h+distance_points*3), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*3) ,float( margin_h+distance_points*3), 0));
+    out_real_centers.push_back(Point3f(  float(margin_w+distance_points*4) ,float( margin_h+distance_points*3), 0));
+
+
+    Mat real_points_img = Mat::zeros(Size(h,w), CV_8UC3);
+    for(int i=0;i<out_real_centers.size();i++){
+        circle(real_points_img, Point2f(out_real_centers[i].x,out_real_centers[i].y), 2,  Scalar( 0, 0, 255 ) , 2);
+    }
+    //save_frame(PATH_DATA_FRAMES,"ideal image", real_points_img);
+}
 ///
 /// \brief CameraCalibrator::runAnkurCalibrationSinRotTras realiza la calibracion usando el método propuesto en el paper de Ankur
 /// \param imageSize        Tamaño de la imagen
@@ -654,6 +691,10 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
     Size templateSize;
     // Generando las posiciones del template
     vector<Point2f> dstPoints;
+    vector<Point2f> control_points_2d;
+    float margin_h= 70;
+    float margin_w = 90;
+    float distance_points = 110;
     float dist = 44;//OFFSET_ANKUR;
     templateSize.width = dist * (numCols + 1);
     switch (pattDetector->getCurrentPattern()) {
@@ -667,7 +708,8 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
             templateSize.height = dist * (numRows + 1);
             for (uint j = numCols; j > 0; j--)
                 for (size_t i = 1; i <= numRows; i++)
-                    dstPoints.push_back(Point2f(j * dist, i * dist));
+                    //dstPoints.push_back(Point2f(j * dist, i * dist));
+                    control_points_2d.push_back(Point2f(margin_w + distance_points * j,margin_h + distance_points * i));
             break;
     }
 
@@ -695,6 +737,8 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
 
     //while(abs(newRms2 - newRms1) > TOL_ANKUR && numIterations < MAX_INTER_ANKUR) {
     while(numIterations < MAX_INTER_ANKUR) {
+        Mat frameSize;
+
         //newRms1 = newRms2;
         numIterations++;
 
@@ -706,34 +750,29 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
         bool status = false;
         int cont = 0;
 
-        //vector<vector<Point2f> > inputQuad2;
-        /*Point2f inputQuad[4];
-        Point2f outputQuad[4];
-        inputQuad.push_back(imagePoints[15]);
-        inputQuad.push_back(imagePoints[19]);
-        inputQuad.push_back(imagePoints[4]);
-        inputQuad.push_back(imagePoints[0]);
-        inputQuad[0] = imagePoints[15][0];
-        inputQuad[1] = imagePoints[19][0];
-        inputQuad[2] = imagePoints[4][0];
-        inputQuad[3] = imagePoints[0][0];
-        outputQuad[0] = Point2f( 55, 55 );
-        outputQuad[1] = Point2f( 555 - 1,55);
-        outputQuad[2] = Point2f( 555 - 1,430 - 1);
-        outputQuad[3] = Point2f( 55,430 - 1);*/
+        vector<Point3f> real_centers;
+        int h = numCols;
+        int w = numRows;
+        create_real_pattern(h,w, real_centers);
+
+        //cout<<"imagePoints0"<<imagePoints[0]<<endl;
+        //cout<<"imagePoints0"<<imagePoints[0][0] <<endl;
 
         for(size_t i = 0; actived && i < frames.size(); i++) {
+            frameSize = frames[i].clone();
             // Undistort el frame actual
             undistort(frames[i], imgUnd, cameraMatrix, distCoeffs);
             //imwrite(folderOutVideo + "_undistort_" + num2str<int>(i) + ".png", imgUnd);
             imshow("Undistort", imgUnd);
             // Hallando la matriz de homografia para corregir la perspectiva
-            H = findHomography(imagePoints[i], dstPoints, noArray(), CV_RANSAC);
-            Hi = findHomography(dstPoints,imagePoints[i], noArray(),CV_RANSAC);
+            H = findHomography(imagePoints[i],real_centers);
+            Hi= findHomography(real_centers,imagePoints[i]);
+            //H = findHomography(imagePoints[i], dstPoints, noArray(), CV_RANSAC);
+            //Hi = findHomography(dstPoints,imagePoints[i], noArray(),CV_RANSAC);
             //H = getPerspectiveTransform( inputQuad, outputQuad );
             // Generando la imagen fronto-paralela con la matriz H
             //warpPerspective(imgUnd, imgFronPar, H, templateSize);
-            warpPerspective(imgUnd, imgFronPar, H, imgFronPar.size());
+            warpPerspective(imgUnd, imgFronPar, H, frameSize.size());
 
             //H = getPerspectiveTransform( outputQuad, inputQuad );
             imwrite(folderOutVideo +"/"+ folderOutVideo + "_frontoparalelo_" + num2str<int>(i) + ".png", imgFronPar);
@@ -859,12 +898,13 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
         //cout << "FRAMES ENVIADOS: " << cont << " / " << numFramesToCalibration << endl;
        // cout << "\n% Analisis: " << (cont * 100.0 / numFramesToCalibration) << "\nDiffRMS: " << abs(newRms2 - newRms1) << endl << endl;
     }
-    saveValuesToCSV<double>(folderOutVideo + "/"+folderOutVideo + "_RMSs.csv", vRms);
+    saveValuesToCSV<double>(folderOutVideo + "/" + folderOutVideo + "_RMSs.csv", vRms);
 
     /*cout << "\n=====================\n";
     cout << "ANKUR Method:\n -NumIterations: " << numIterations << "\n -Tolerance: " << TOL_ANKUR << "\n -OurRMS: " << rmsIni << "\n -MinRMS: " << minRms << endl;
     cout << "=====================\n";*/
     return newRms1;
+
 }
 
 
@@ -1255,10 +1295,10 @@ void CameraCalibrator::processingPattern()
                     undistort(img, tmp, paramCameraMatrix, paramDistCoeffs);
                     imshow("After calibration", tmp);
                     visualizer->visualizeImage(PROCFIN, ImageHelper::convertMatToQimage(tmp), "UNDISTORT IMAGE");
-                    string path = "/home/uburoxana/Documentos/Imagenes/PROYECTOFINAL_CALIBRACION/PatronCircular/build-RCirculos-Desktop-Debug/PadronAnillos_01/Opencv/";
+                    //string path = "/home/uburoxana/Documentos/Imagenes/PROYECTOFINAL_CALIBRACION/PatronCircular/build-RCirculos-Desktop-Debug/PadronAnillos_01/Opencv/";
 
                     imwrite(folderOutVideo + "/frame_" + num2str<int>(framesTotal) + "orifpng", tmp);
-                    imwrite(path + num2str<int>(id++) + ".png", tmp);
+                    imwrite(folderOutVideo + "/Calibrados/" + num2str<int>(id++) + ".png", tmp);
                     if (waitKey(20) >= 0)
                         break;
                 }
