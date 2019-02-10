@@ -1237,9 +1237,7 @@ vector<Point2f> ordenar(vector<Point2f> centros, int col, int fil)
 
 bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
 
-    //ordenar
-//    keypoints.resize(20);
-    //keypoints = ordenar(keypoints);
+
     int countKeypoints = numCols*numRows;
     if(keypoints.size()!=countKeypoints)// && keypoints.size()<= countKeypoints
         return false;
@@ -1289,7 +1287,7 @@ bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
     colors.push_back(MY_COLOR_YELLOW);
     colors.push_back(MY_COLOR_GREEN);
     colors.push_back(MY_COLOR_ORANGE);
-    colors.push_back(MY_COLOR_WHITE);
+    //colors.push_back(MY_COLOR_WHITE);
 
     // En esta parte se empieza a utilizar el convexhull para hallar los segmentos de arriba y abajo
     if(keypoints.size() > 0) {
@@ -1380,9 +1378,9 @@ bool PatternDetector::trackingRingsPoints(vector<Point2f> &keypoints){
 
                 // Ordenamos las distancias, para escoger los 3 mas cercanos
                 sort(distanciaRecta.begin(),distanciaRecta.end(),cmp2);
-                for(int i=0;i<3;i++){
+                for(int i=0;i<2;i++){
                     SortPoints.push_back(make_pair(distanciaRecta[i].second.x,distanciaRecta[i].second.y));
-                    circle(img, distanciaRecta[i].second, 5, colors[j%colors.size()], CV_FILLED,8,0);
+                    circle(img, distanciaRecta[i].second, 4, colors[j%colors.size()], CV_FILLED,8,0);
                 }
 
                 circle(img, Point(ans[1][j].first,ans[1][j].second), 10, CV_RGB(0,0,0), CV_FILLED,8,0);

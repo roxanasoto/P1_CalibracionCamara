@@ -216,10 +216,10 @@ void CameraCalibrator::selectFrames(map<uint, vector<Point2f> > mapFrames, vecto
                 // El video es de Anillos
                 // A01
                 int myFrames1[] = {44,56,75,77,81,
-                                                  117,120,128,188,256,
-                                                  266,288,297,308,402,
-                                                  439,480,587,599,608,
-                                                  656,664,691,730,762};
+                                  117,120,128,188,256,
+                                  266,288,297,308,402,
+                                  439,480,587,599,608,
+                                  656,664,691,730,762};
                 /*int myFrames1[] = {16,36,46,74,84,
                                   159,338,396,474,507,
                                   526,541,555,562,574,
@@ -328,6 +328,8 @@ void CameraCalibrator::selectFrames(map<uint, vector<Point2f> > mapFrames, vecto
         imageSize = img.size();
 
         if(mySetFrames.find(currFrame) != mySetFrames.end() && mapFrames[currFrame].size() == numRows*numCols) {
+            cout<<"numRows"<<numRows<<endl;
+            cout<<"numCols"<<numCols<<endl;
             frames.push_back(img.clone());              // Pasas la imagen
             centers.push_back(mapFrames[currFrame]);    // Pasas los centros
             cout << "FRAME: " << currFrame << " -> SIZE CENTERS: " << mapFrames[currFrame].size() << endl;
@@ -688,6 +690,9 @@ void create_real_pattern(int h, int w, vector<Point3f>& out_real_centers){
 ///
 double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<vector<Point2f> > imagePoints, vector<vector<Point3f> > objectsPoints, vector<Mat> frames, Mat &cameraMatrix, Mat &distCoeffs, vector<Mat> &rvecs, vector<Mat> &tvecs)
 {
+    /*int h = frames.cols;
+    int w = frames.
+    Size imageSize(h, w);*/
     Size templateSize;
     // Generando las posiciones del template
     vector<Point2f> dstPoints;
@@ -708,8 +713,8 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
             templateSize.height = dist * (numRows + 1);
             for (uint j = numCols; j > 0; j--)
                 for (size_t i = 1; i <= numRows; i++)
-                    //dstPoints.push_back(Point2f(j * dist, i * dist));
-                    control_points_2d.push_back(Point2f(margin_w + distance_points * j,margin_h + distance_points * i));
+                    dstPoints.push_back(Point2f(j * dist, i * dist));
+                    //control_points_2d.push_back(Point2f(margin_w + distance_points * j,margin_h + distance_points * i));
             break;
     }
 
@@ -765,14 +770,14 @@ double CameraCalibrator::runAnkurCalibrationSinRotTras(Size imageSize, vector<ve
             //imwrite(folderOutVideo + "_undistort_" + num2str<int>(i) + ".png", imgUnd);
             imshow("Undistort", imgUnd);
             // Hallando la matriz de homografia para corregir la perspectiva
-            H = findHomography(imagePoints[i],real_centers);
-            Hi= findHomography(real_centers,imagePoints[i]);
-            //H = findHomography(imagePoints[i], dstPoints, noArray(), CV_RANSAC);
-            //Hi = findHomography(dstPoints,imagePoints[i], noArray(),CV_RANSAC);
+            //H = findHomography(imagePoints[i],real_centers);
+            //Hi= findHomography(real_centers,imagePoints[i]);
+            H = findHomography(imagePoints[i], dstPoints, noArray(), CV_RANSAC);
+            Hi = findHomography(dstPoints,imagePoints[i], noArray(),CV_RANSAC);
             //H = getPerspectiveTransform( inputQuad, outputQuad );
             // Generando la imagen fronto-paralela con la matriz H
-            //warpPerspective(imgUnd, imgFronPar, H, templateSize);
-            warpPerspective(imgUnd, imgFronPar, H, frameSize.size());
+            warpPerspective(imgUnd, imgFronPar, H, templateSize);
+            //warpPerspective(imgUnd, imgFronPar, H, frameSize.size());
 
             //H = getPerspectiveTransform( outputQuad, inputQuad );
             imwrite(folderOutVideo +"/"+ folderOutVideo + "_frontoparalelo_" + num2str<int>(i) + ".png", imgFronPar);
