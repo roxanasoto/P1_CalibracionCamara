@@ -4,7 +4,9 @@
 
 *Try out the code without running it!* Check out the autors online demo [here](http://www.cs.nott.ac.uk/~psxasj/3dme/).
 
-[[http://aaronsplace.co.uk/papers/jackson2017recon/preview.png]]
+http://aaronsplace.co.uk/papers/jackson2017recon/preview.png
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=XWRRvUBN1wk)
 
 Please visit the autor [project webpage](http://aaronsplace.co.uk/papers/jackson2017recon/) for a link to the paper and any information related to it.
 
@@ -15,6 +17,9 @@ for 3D face reconstruction from a single image. This method approaches
 the problem of reconstruction as a segmentation problem, producing a
 3D volume, spatially aligned with the input image. A mesh can then be
 obtained by taking the isosurface of this volume.
+
+![alt text](https://github.com/roxanasoto/P1_CalibracionCamara/blob/master/Trabajo%202/codigo/Avance1/vrn_torch/Selection_021.png)
+
 
 Several example images are included in the examples folder. The good example would be get on this site
 [3DDFA](http://www.cbsr.ia.ac.cn/users/xiangyuzhu/projects/3DDFA/main.htm), but we tested with the more real images took with a mobile phone photos.
