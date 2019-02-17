@@ -6,7 +6,7 @@
 
 http://aaronsplace.co.uk/papers/jackson2017recon/preview.png
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=XWRRvUBN1wk)
+[![VIDEO DEMO](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=XWRRvUBN1wk)
 
 Please visit the autor [project webpage](http://aaronsplace.co.uk/papers/jackson2017recon/) for a link to the paper and any information related to it.
 
