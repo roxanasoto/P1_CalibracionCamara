@@ -15,7 +15,7 @@
 #define INTERVAL_INC    7
 #define OFFSET_ANKUR    30
 #define TOL_ANKUR       0.0001
-#define MAX_INTER_ANKUR 50
+#define MAX_INTER_ANKUR 30
 
 
 #define INF (1<<30)
