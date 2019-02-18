@@ -16,10 +16,13 @@ from torch.autograd import Variable
 import face_alignment
 import vrn_unguided
 
+img_n = 'sol_pd1'
+
 ### initial 
 enable_cuda = True
 #
-FA = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, enable_cuda=False, flip_input=False)
+#FA = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, enable_cuda=False, flip_input=False)
+FA = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False)
 #
 VRN = vrn_unguided.vrn_unguided
 VRN.load_state_dict(torch.load('models/vrn_unguided.pth'))
@@ -27,7 +30,8 @@ if enable_cuda:
     VRN.cuda()
 
 ### get landmarks from test image
-image_file = 'examples/star-1.jpg'
+
+image_file = 'data/Selection_'+img_n+'.jpg'
 image = cv.imread(image_file)
 try:
     image_height, image_width, image_depth = image.shape
@@ -56,6 +60,10 @@ for var in  preds[0]:
     cv.circle(canvas, (var[0], var[1]), 4, [128, 0, 255], thickness=-1)
 #
 plt.imshow(canvas[:,:,[2,1,0]])
+
+# save landmark visualization
+land_img = 'landmark/Selection_L'+img_n+'.jpg'
+cv.imwrite(land_img,canvas)
 
 ### crop face image
 scale=90/math.sqrt((minX-maxX)*(minY-maxY))
@@ -91,11 +99,13 @@ if rw - x < crop_width/2:
 if rh - y < crop_height/2:
     bottom = crop_height/2 + y - rh
 #
-crop_image = cv.copyMakeBorder(resized_image,top, bottom, left, right,cv.BORDER_REFLECT)
-crop_image = crop_image[cy-crop_height/2:cy+crop_height/2, cx-crop_width/2:cx+crop_width/2, :]
+crop_image = cv.copyMakeBorder(resized_image,int(top), int(bottom), int(left), right,cv.BORDER_REFLECT)
+crop_image = crop_image[int(cy-crop_height/2):int(cy+crop_height/2),int(cx-crop_width/2):int(cx+crop_width/2), :]
 plt.imshow(crop_image[:,:,[2,1,0]])
 
-
+#save image crop
+crop_img = 'crops/Selection_C'+img_n+'.jpg'
+cv.imwrite(crop_img,crop_image)
 
 ### vrn output
 inp = torch.from_numpy(crop_image.transpose((2, 0, 1))).float().unsqueeze_(0)
@@ -134,7 +144,7 @@ colour = vc[n,2:].reshape((vertices.shape[0],3)).astype(float) / 255
 
 vc = np.hstack((vertices, colour))
 
-obj_file = 'output.obj'
+obj_file = 'output/output_'+img_n+'.obj'
 with open(obj_file, 'w') as f:
     for v in range(0,vc.shape[0]):
         f.write('v %0.2f %0.2f %0.2f %0.2f %0.2f %0.2f\n' % (vc[v,0],vc[v,1],vc[v,2],vc[v,3],vc[v,4],vc[v,5]))

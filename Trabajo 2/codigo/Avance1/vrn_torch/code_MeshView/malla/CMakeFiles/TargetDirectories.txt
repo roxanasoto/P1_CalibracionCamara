@@ -1,0 +1,3 @@
+/home/ewilderd/Downloads/Imagenes/proyecto2/Imagenes/Semana_05/Codigo_CPP/malla/CMakeFiles/rebuild_cache.dir
+/home/ewilderd/Downloads/Imagenes/proyecto2/Imagenes/Semana_05/Codigo_CPP/malla/CMakeFiles/malla.dir
+/home/ewilderd/Downloads/Imagenes/proyecto2/Imagenes/Semana_05/Codigo_CPP/malla/CMakeFiles/edit_cache.dir

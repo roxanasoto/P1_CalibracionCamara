@@ -1,0 +1,1 @@
+/usr/bin/c++  -std=c++11  -rdynamic CMakeFiles/malla.dir/Malla.cpp.o CMakeFiles/malla.dir/InitShader.cpp.o  -o malla -lGL -lGLU -lglut -lXmu -lXi -lGLEW 
