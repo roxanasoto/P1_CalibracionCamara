@@ -1,6 +1,6 @@
 # P1_CalibracionCamara
 En este repositorio presentamos la implementacion de calibracion de càmara que es muy util para reconstrucción 3D, el cual fue implementado paso a paso usando un entorno de programacion Qt en c++, siguiendo el proceso de reconocimiento de circulos, anillos y haciendo el tracking y finalmente la calibracion de camara y el refinamiento siguiento el paper ![alt text](https://www.ri.cmu.edu/pub_files/2009/10/Calib.pdf "paper doc pdf"). para el proceso de refinamiento y el proceso de reconocimiento se utilizo un conjunto setting manual de 25 frames obteniendo un accuracy promedo de 0.3 al final para el video de prueba que se encuentra en la carpeta video(sin compresion y distorsion tomados en clase). el pipeline general se muestra acontinuacion.
-![alt text](https://github.com/roxanasoto/P1_CalibracionCamara/pipeline_calibration.png)
+![alt text](https://github.com/roxanasoto/P1_CalibracionCamara/blob/master/pipeline_calibration.png)
 
 Estudiantes:
 - Roxana Soto
