@@ -5,7 +5,7 @@
 2. Open project and run
 
 # To RCirculos:  
-This project is about of Calibration to the patterns: Ring and circles using calibration Opemncv and Ankur
+ours project is about of Calibration to the patterns: Ring and circles using calibration Opencv and Ankur
 1. install Opencv and lib cminpack
 2. open .pro with QtCreator
 3. configure RCirculos.pro with respect his system operative
