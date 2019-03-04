@@ -4,3 +4,7 @@ Enlace Youtube:
 https://youtu.be/l4snslbEINA
 - Demo Calibration Patron Circles, camara without distortion:
 https://youtu.be/nlE-Koo953k
+- Demo Calibration Patron Ring, camara with distortion:
+
+- Demo Calibration Patron Ring, camara without distortion:
+
